@@ -50,3 +50,73 @@ PlayerUnitsPayload: 加入房间时下发给玩家的可用单位列表 + 当前
 同时简化 inventory 相关的旧接口为"可选保留"，但服务端不再使用
 
 
+# deploy脚本
+
+```
+# ========== 1. 装环境 ==========
+ssh root@你的公网IP
+
+# 装 Node.js 20.x（用 nodesource 仓库，确保有新版）
+curl -fsSL https://rpm.nodesource.com/setup_20.x | bash -
+
+# 装依赖 + nginx + git
+yum install -y nodejs git nginx
+
+# 验证
+node -v    # v20.x.x
+npm -v     # 10.x
+nginx -v   # 1.x
+
+# ========== 2. 拉代码 + 构建 ==========
+mkdir -p /opt
+cd /opt
+git clone https://github.com/ 你的用户名/你的仓库.git h5sgame
+cd /opt/h5sgame
+
+npm ci --no-audit --no-fund
+npm run build
+
+# 确认 dist/ 有产物
+ls -la /opt/h5sgame/dist/
+
+# ========== 3. systemd 管理 Node ==========
+cp /opt/h5sgame/deploy/h5sgame.service /etc/systemd/system/h5sgame.service
+
+# 【重要】改环境变量——把密钥换成你自己的长随机串
+vi /etc/systemd/system/h5sgame.service
+# 找到 H5SGAME_DEPLOY_KEY=change-me-to-a-long-random-string，改成你自己的
+
+chmod +x /opt/h5sgame/deploy/deploy.sh
+
+systemctl daemon-reload
+systemctl enable h5sgame
+systemctl start h5sgame
+
+# 确认运行
+systemctl status h5sgame
+journalctl -u h5sgame -n 30
+
+# ========== 4. nginx 反代（可选但推荐） ==========
+cp /opt/h5sgame/deploy/nginx-ubuntu.conf /etc/nginx/conf.d/h5sgame.conf
+
+# CentOS 下没有 sites-enabled 目录，直接放在 conf.d/ 即可
+# 但是 conf.d/*.conf 会被主 nginx.conf include；
+# 为避免与默认 80 端口冲突，先停掉默认首页（如果有）：
+# 把 /etc/nginx/nginx.conf 里的默认 server 块注释掉（通常里面只有一个默认站点，端口冲突时才需要）
+# 或者直接删除：
+rm -f /etc/nginx/conf.d/default.conf 2>/dev/null || true
+
+# 测试 + 重载
+nginx -t            # 必须看到 test is successful
+systemctl enable nginx
+systemctl start nginx
+systemctl reload nginx
+
+# ========== 5. 放通端口（firewalld / 云安全组） ==========
+# CentOS 默认带 firewalld
+firewall-cmd --permanent --add-service=http
+firewall-cmd --permanent --add-port=3000/tcp   # 如果你不装 nginx，留着；装了 nginx 可以只留 80/443
+firewall-cmd --reload
+
+# 别忘了在云厂商控制台（阿里云/腾讯云）放行同样的端口
+```
