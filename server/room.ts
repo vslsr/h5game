@@ -1,6 +1,7 @@
 // 服务端：房间管理（基础联网 + 单位弹射物理 + 死亡检测 + 事件总线 + 技能系统）
 import type { Player, Unit, Obstacle, JoinedPayload, GameEvent, UnitDeathEvent, SkillCastEvent, UnitImpulseEvent } from '../shared/types';
 import { GAME_CONSTANTS, SKILL_DEFS, makeDefaultUnits } from '../shared/types';
+import { lineOfSight } from '../shared/physics';
 
 // 冲击波：一次立即结算的范围事件（本 tick 内直接执行）
 interface ShockwaveEffect {
@@ -143,6 +144,16 @@ export class GameRoom {
     } else if (def.type === 'point') {
       // ========== 点型技能：根据 skillId 分发 ==========
       if (pointX === undefined || pointY === undefined) return null;
+
+      // 视线检测：单位 → 目标点之间不能被墙体或其他单位遮挡
+      const otherUnits = [...this.units.values()].filter(u => u.id !== unitId);
+      const hasLineOfSight = lineOfSight(
+        unit.x, unit.y,
+        pointX, pointY,
+        this.obstacles,
+        otherUnits,
+      );
+      if (!hasLineOfSight) return null;
 
       if (skillId === 'shockwave') {
         // 冲击波：对范围内单位做推力 + 伤害

@@ -1,265 +1,379 @@
-import { GAME_CONSTANTS, DEFAULT_PLAYER_UNITS } from '../shared/types';
-import { moveWithCollisions } from '../shared/physics';
-import { DEFAULT_OBSTACLES } from './obstacles';
-const { MAX_SPEED, WORLD_BOUND } = GAME_CONSTANTS;
+import { GAME_CONSTANTS, SKILL_DEFS, makeDefaultUnits } from '../shared/types';
+import { lineOfSight } from '../shared/physics';
 export class GameRoom {
-    id;
+    onStateChanged;
     players = new Map();
-    obstacles;
-    // 每个玩家的可用单位（服务端存放）
-    playerUnits = new Map();
-    // 每个玩家的选择状态
-    playerSelection = new Map();
-    // 服务端子弹
-    bullets = [];
-    lastTickMs = Date.now();
-    events;
-    constructor(id, events) {
-        this.id = id;
-        this.events = events;
-        this.obstacles = DEFAULT_OBSTACLES.map((o) => ({ ...o }));
-        console.log(`[Room] Created: ${id}`);
+    units = new Map();
+    obstacles = [];
+    playerHues = new Map();
+    playerNames = new Map();
+    hueCounter = 0;
+    tickTimer = null;
+    onGameEvent = null;
+    // 本 tick 内需要立即结算的范围/瞬移等一次性事件
+    pendingShockwaves = [];
+    constructor(onStateChanged, options) {
+        this.onStateChanged = onStateChanged;
+        if (options?.onGameEvent)
+            this.onGameEvent = options.onGameEvent;
+        const positions = [
+            { x: -128, y: 64 },
+            { x: 128, y: 64 },
+            { x: 0, y: -160 },
+        ];
+        for (let i = 0; i < positions.length; i++) {
+            this.obstacles.push({
+                id: `ob-${i}`,
+                x: positions[i].x,
+                y: positions[i].y,
+                size: GAME_CONSTANTS.OBSTACLE_SIZE,
+            });
+        }
+        this.tickTimer = setInterval(() => this.tick(), GAME_CONSTANTS.TICK_MS);
+    }
+    destroy() {
+        if (this.tickTimer)
+            clearInterval(this.tickTimer);
+        this.tickTimer = null;
     }
     createPlayer(id, name) {
-        const player = {
-            id,
-            name: name || `玩家${id.slice(0, 4)}`,
-            x: 0,
-            y: 0,
-            vx: 0,
-            vy: 0,
-            hue: Math.floor(Math.random() * 360)
-        };
-        const pos = moveWithCollisions(player.x, player.y, 0, 0, this.obstacles);
-        player.x = pos.x;
-        player.y = pos.y;
-        // 初始化单位列表与选择
-        const units = DEFAULT_PLAYER_UNITS.map((u) => ({
-            ...u,
-            skills: u.skills.map((s) => ({ ...s }))
-        }));
-        this.playerUnits.set(id, units);
-        this.playerSelection.set(id, {
-            selectedUnitId: units[0]?.unitId ?? '',
-            selectedSkillIndex: 0
-        });
+        const player = { id, name };
+        this.players.set(id, player);
+        this.playerNames.set(id, name);
+        const hue = (this.hueCounter++ * 60) % 360;
+        this.playerHues.set(id, hue);
+        const units = makeDefaultUnits(id, hue, 0, 128);
+        for (const u of units)
+            this.units.set(u.id, u);
         return player;
-    }
-    addPlayer(player) {
-        this.players.set(player.id, player);
     }
     removePlayer(id) {
         this.players.delete(id);
-        this.playerUnits.delete(id);
-        this.playerSelection.delete(id);
-    }
-    // 取得玩家的可用单位列表
-    getUnits(playerId) {
-        return this.playerUnits.get(playerId) ?? [];
-    }
-    // 获取玩家的当前选择
-    getSelection(playerId) {
-        return this.playerSelection.get(playerId) ?? null;
-    }
-    // 获取当前选中的单位
-    getSelectedUnit(playerId) {
-        const sel = this.playerSelection.get(playerId);
-        if (!sel)
-            return null;
-        const units = this.playerUnits.get(playerId);
-        if (!units)
-            return null;
-        return units.find((u) => u.unitId === sel.selectedUnitId) ?? null;
-    }
-    // 获取当前选中的技能（基于当前单位）
-    getSelectedSkill(playerId) {
-        const unit = this.getSelectedUnit(playerId);
-        if (!unit)
-            return null;
-        const sel = this.playerSelection.get(playerId);
-        if (!sel)
-            return null;
-        const skill = unit.skills[sel.selectedSkillIndex];
-        return skill ? { skill, unit } : null;
-    }
-    // 切换单位
-    selectUnit(playerId, unitId) {
-        const units = this.playerUnits.get(playerId);
-        if (!units)
-            return false;
-        const unit = units.find((u) => u.unitId === unitId);
-        if (!unit)
-            return false;
-        const sel = this.playerSelection.get(playerId);
-        if (sel) {
-            sel.selectedUnitId = unitId;
-            sel.selectedSkillIndex = 0; // 切换单位后重置技能选择
+        this.playerHues.delete(id);
+        this.playerNames.delete(id);
+        for (const [uid, u] of this.units) {
+            if (u.ownerId === id)
+                this.units.delete(uid);
         }
-        return true;
     }
-    // 切换技能（索引）
-    selectSkill(playerId, index) {
-        const sel = this.playerSelection.get(playerId);
-        if (!sel)
-            return false;
-        const unit = this.getSelectedUnit(playerId);
-        if (!unit)
-            return false;
-        if (index < 0 || index >= unit.skills.length)
-            return false;
-        sel.selectedSkillIndex = index;
-        return true;
-    }
-    applyInput(id, input) {
-        const player = this.players.get(id);
-        if (!player)
-            return;
-        let { vx, vy } = input;
-        const len = Math.sqrt(vx * vx + vy * vy);
-        if (len > MAX_SPEED) {
-            vx = (vx / len) * MAX_SPEED;
-            vy = (vy / len) * MAX_SPEED;
+    getUnitsByOwner(ownerId) {
+        const result = [];
+        for (const u of this.units.values()) {
+            if (u.ownerId === ownerId)
+                result.push(u);
         }
-        player.vx = vx;
-        player.vy = vy;
+        return result;
     }
-    addBullet(bullet) {
-        this.bullets.push(bullet);
+    getStateFor(playerId) {
+        return {
+            selfId: playerId,
+            selfName: this.playerNames.get(playerId) ?? '',
+            players: [...this.players.values()],
+            units: [...this.units.values()],
+            obstacles: [...this.obstacles],
+        };
     }
-    tick() {
+    snapshotUnits() {
+        return [...this.units.values()];
+    }
+    snapshotPlayers() {
+        return [...this.players.values()];
+    }
+    // --- 技能系统：施放一个技能 ---
+    applySkill(unitId, ownerId, skillId, dirX, dirY, charge, pointX, pointY) {
+        const unit = this.units.get(unitId);
+        if (!unit || unit.ownerId !== ownerId)
+            return null;
+        // 查技能定义 + 检查该单位是否拥有它
+        const def = SKILL_DEFS[skillId];
+        if (!def)
+            return null;
+        const slot = unit.skills.find((s) => s.defId === skillId);
+        if (!slot)
+            return null;
+        // 必须完全停下
+        if (unit.vx !== 0 || unit.vy !== 0)
+            return null;
+        // 冷却检查
         const now = Date.now();
-        const dt = Math.min(0.1, (now - this.lastTickMs) / 1000);
-        this.lastTickMs = now;
-        for (const p of this.players.values()) {
-            const next = moveWithCollisions(p.x, p.y, p.vx, p.vy, this.obstacles);
-            p.x = next.x;
-            p.y = next.y;
-            if (p.x > WORLD_BOUND)
-                p.x = WORLD_BOUND;
-            if (p.x < -WORLD_BOUND)
-                p.x = -WORLD_BOUND;
-            if (p.y > WORLD_BOUND)
-                p.y = WORLD_BOUND;
-            if (p.y < -WORLD_BOUND)
-                p.y = -WORLD_BOUND;
-            p.vx = 0;
-            p.vy = 0;
-        }
-        if (this.bullets.length > 0 && dt > 0) {
-            const { BULLET_RADIUS, WORLD_BOUND: BULLET_BOUND } = GAME_CONSTANTS;
-            const remainingBullets = [];
-            for (const b of this.bullets) {
-                if (now - b.createdAt > b.lifetimeMs)
-                    continue;
-                let nx = b.x + b.vx * dt;
-                let ny = b.y + b.vy * dt;
-                if (Math.abs(nx) > BULLET_BOUND || Math.abs(ny) > BULLET_BOUND)
-                    continue;
-                let hitObstacle = null;
-                for (const ob of this.obstacles) {
-                    const halfSize = ob.size / 2;
-                    const closestX = Math.max(ob.x - halfSize, Math.min(nx, ob.x + halfSize));
-                    const closestY = Math.max(ob.y - halfSize, Math.min(ny, ob.y + halfSize));
-                    const ddx = nx - closestX;
-                    const ddy = ny - closestY;
-                    if (ddx * ddx + ddy * ddy < BULLET_RADIUS * BULLET_RADIUS) {
-                        hitObstacle = ob;
-                        break;
-                    }
-                }
-                if (hitObstacle) {
-                    hitObstacle.hp -= b.damage;
-                    // 爆炸：对半径内的其他障碍造成额外伤害
-                    if (b.explosive && b.explosionRadius > 0) {
-                        const explosionX = nx;
-                        const explosionY = ny;
-                        const r = b.explosionRadius;
-                        for (const ob of this.obstacles) {
-                            if (ob.id === hitObstacle.id)
-                                continue;
-                            const dx = ob.x - explosionX;
-                            const dy = ob.y - explosionY;
-                            const dist = Math.sqrt(dx * dx + dy * dy);
-                            if (dist <= r) {
-                                const falloff = 1 - dist / r;
-                                ob.hp -= Math.max(1, Math.round(b.explosionDamage * falloff));
-                            }
-                        }
-                    }
-                    // 清理被摧毁的障碍并广播
-                    const destroyedIds = [];
-                    const updatedHps = [];
-                    for (let i = this.obstacles.length - 1; i >= 0; i--) {
-                        if (this.obstacles[i].hp <= 0) {
-                            destroyedIds.push(this.obstacles[i].id);
-                            this.obstacles.splice(i, 1);
-                        }
-                    }
-                    // 处理命中的障碍是否被摧毁并上报
-                    if (hitObstacle.hp <= 0) {
-                        // 已被上面逻辑移除，直接广播 destroy
-                    }
-                    else {
-                        updatedHps.push({ obstacleId: hitObstacle.id, hp: hitObstacle.hp, maxHp: hitObstacle.maxHp });
-                    }
-                    // 爆炸造成的其他障碍更新
-                    for (const ob of this.obstacles) {
-                        if (ob.id !== hitObstacle.id) {
-                            // 如果是爆炸范围内（上面已扣血），需要上报其新 hp
-                            if (b.explosive && b.explosionRadius > 0) {
-                                const dx = ob.x - nx;
-                                const dy = ob.y - ny;
-                                if (Math.sqrt(dx * dx + dy * dy) <= b.explosionRadius) {
-                                    if (ob.hp > 0) {
-                                        updatedHps.push({ obstacleId: ob.id, hp: ob.hp, maxHp: ob.maxHp });
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    for (const e of updatedHps)
-                        this.events.onObstacleHit(e);
-                    for (const id of destroyedIds)
-                        this.events.onObstacleDestroyed({ obstacleId: id });
-                    continue;
-                }
-                b.x = nx;
-                b.y = ny;
-                remainingBullets.push(b);
+        if (slot.readyAtTs > now)
+            return null;
+        // 设置冷却
+        slot.readyAtTs = now + def.cooldownMs;
+        // ========== 方向型技能：设置单位速度 ==========
+        if (def.type === 'direction') {
+            const len = Math.sqrt(dirX * dirX + dirY * dirY);
+            if (len <= 1e-6)
+                return null;
+            const c = Math.min(1.0, Math.max(0.2, charge));
+            const speed = (unit.baseSpeed * c * def.chargeMultiplier) / unit.mass;
+            unit.vx = (dirX / len) * speed;
+            unit.vy = (dirY / len) * speed;
+            if (this.onGameEvent) {
+                const evt = {
+                    type: 'unitImpulse', ts: now, unitId: unit.id, skillId, ownerId,
+                    dirX: dirX / len, dirY: dirY / len, speed,
+                };
+                this.onGameEvent(evt);
             }
-            this.bullets = remainingBullets;
         }
-    }
-    getPlayersSnapshot() {
-        return Array.from(this.players.values());
-    }
-}
-export class RoomManager {
-    rooms = new Map();
-    io = null;
-    attachIo(io) {
-        this.io = io;
-    }
-    getOrCreate(roomId) {
-        if (!this.rooms.has(roomId)) {
-            const events = {
-                onObstacleHit: (payload) => {
-                    if (this.io)
-                        this.io.to(roomId).emit('obstacleHit', payload);
-                },
-                onObstacleDestroyed: (payload) => {
-                    if (this.io)
-                        this.io.to(roomId).emit('obstacleDestroyed', payload);
-                }
+        else if (def.type === 'point') {
+            // ========== 点型技能：根据 skillId 分发 ==========
+            if (pointX === undefined || pointY === undefined)
+                return null;
+            // 视线检测：单位 → 目标点之间不能被墙体或其他单位遮挡
+            const otherUnits = [...this.units.values()].filter(u => u.id !== unitId);
+            const hasLineOfSight = lineOfSight(unit.x, unit.y, pointX, pointY, this.obstacles, otherUnits);
+            if (!hasLineOfSight)
+                return null;
+            if (skillId === 'shockwave') {
+                // 冲击波：对范围内单位做推力 + 伤害
+                this.pendingShockwaves.push({
+                    originX: pointX, originY: pointY,
+                    radius: def.radius ?? 180,
+                    pushSpeed: 360,
+                    damage: def.damage ?? 18,
+                    ownerId: unit.ownerId,
+                });
+            }
+            else if (skillId === 'blink') {
+                // 瞬移：把单位直接挪到目标点；若目标点刚好在障碍内，推出障碍外
+                unit.x = pointX;
+                unit.y = pointY;
+                unit.vx = 0;
+                unit.vy = 0;
+            }
+            else {
+                return null;
+            }
+        }
+        // 广播 skillCast 事件（客户端用来更新 CD 动画）
+        if (this.onGameEvent) {
+            const evt = {
+                type: 'skillCast', ts: now, unitId: unit.id, skillId, ownerId,
+                readyAtTs: slot.readyAtTs,
             };
-            this.rooms.set(roomId, new GameRoom(roomId, events));
+            this.onGameEvent(evt);
         }
-        return this.rooms.get(roomId);
+        // 立即触发一次状态同步（让客户端看到速度变化/位置变化）
+        this.onStateChanged();
+        return unit;
     }
-    get(roomId) {
-        return this.rooms.get(roomId);
-    }
-    getAll() {
-        return Array.from(this.rooms.values());
+    // --- 物理 tick（子步长 + 连续碰撞检测 + 撞击扣血 + 范围技能结算） ---
+    tick() {
+        const dt = GAME_CONSTANTS.TICK_MS / 1000;
+        const friction = GAME_CONSTANTS.FRICTION;
+        const minV = GAME_CONSTANTS.MIN_VELOCITY;
+        const R = GAME_CONSTANTS.UNIT_RADIUS;
+        const D = 2 * R;
+        const D2 = D * D;
+        const EPS = 0.01;
+        const RESTITUTION = 0.9;
+        const OBSTACLE_IMPACT_MIN = 200;
+        const OBSTACLE_IMPACT_SCALE = 15 / 350;
+        const OBSTACLE_IMPACT_MAX = 35;
+        const UNIT_IMPACT_MIN = 150;
+        const UNIT_IMPACT_SCALE = 10 / 400;
+        const UNIT_IMPACT_MAX = 25;
+        let changed = false;
+        let tickCount = 0;
+        const unitArr = [...this.units.values()];
+        if (unitArr.length === 0)
+            return;
+        const obstacleHit = new Set();
+        const unitHit = new Set();
+        // --- 0) 结算本 tick 内的冲击波/点型技能（先于物理推进） ---
+        if (this.pendingShockwaves.length > 0) {
+            for (const sw of this.pendingShockwaves) {
+                for (const u of unitArr) {
+                    if (u.ownerId === sw.ownerId)
+                        continue; // 不推自己
+                    const dx = u.x - sw.originX;
+                    const dy = u.y - sw.originY;
+                    const d = Math.sqrt(dx * dx + dy * dy);
+                    if (d > sw.radius || d <= 1e-3)
+                        continue;
+                    const falloff = 1 - d / sw.radius;
+                    const nx = dx / d;
+                    const ny = dy / d;
+                    // 速度 = 基础推力 * 距离衰减；大质量衰减更快
+                    const sp = sw.pushSpeed * falloff;
+                    u.vx += nx * sp / u.mass;
+                    u.vy += ny * sp / u.mass;
+                    const dmg = Math.round(sw.damage * falloff);
+                    if (dmg > 0)
+                        u.hp = Math.max(0, u.hp - dmg);
+                }
+            }
+            this.pendingShockwaves = [];
+            changed = true;
+        }
+        // --- 1) 计算子步长 ---
+        let maxSpeed = 0;
+        for (const u of unitArr) {
+            const sp2 = u.vx * u.vx + u.vy * u.vy;
+            if (sp2 > maxSpeed)
+                maxSpeed = sp2;
+        }
+        const safeStep = 0.6 * R;
+        let subSteps = 1;
+        if (maxSpeed > 0) {
+            const movePerTick = Math.sqrt(maxSpeed) * dt;
+            if (movePerTick > safeStep) {
+                subSteps = Math.max(1, Math.ceil(movePerTick / safeStep));
+            }
+        }
+        if (subSteps > 8)
+            subSteps = 8;
+        const subDt = dt / subSteps;
+        const subFriction = Math.pow(friction, 1 / subSteps);
+        // --- 2) 逐子步推进 ---
+        for (let step = 0; step < subSteps; step++) {
+            tickCount++;
+            for (const u of unitArr) {
+                if (u.vx === 0 && u.vy === 0)
+                    continue;
+                u.x += u.vx * subDt;
+                u.y += u.vy * subDt;
+                changed = true;
+            }
+            for (const u of unitArr) {
+                if (u.vx === 0 && u.vy === 0)
+                    continue;
+                for (let oi = 0; oi < this.obstacles.length; oi++) {
+                    const ob = this.obstacles[oi];
+                    const half = ob.size / 2;
+                    const cx = Math.max(ob.x - half, Math.min(u.x, ob.x + half));
+                    const cy = Math.max(ob.y - half, Math.min(u.y, ob.y + half));
+                    const dx = u.x - cx;
+                    const dy = u.y - cy;
+                    const d2 = dx * dx + dy * dy;
+                    if (d2 >= R * R)
+                        continue;
+                    const d = Math.max(Math.sqrt(d2), 0.0001);
+                    const nx = dx / d;
+                    const ny = dy / d;
+                    const penetration = R - d + EPS;
+                    u.x += nx * penetration;
+                    u.y += ny * penetration;
+                    const vDotN = u.vx * nx + u.vy * ny;
+                    if (vDotN < 0) {
+                        const bounce = 0.35;
+                        const impactSpeed = Math.abs(vDotN);
+                        u.vx -= (1 + bounce) * vDotN * nx;
+                        u.vy -= (1 + bounce) * vDotN * ny;
+                        u.vx *= 0.6;
+                        u.vy *= 0.6;
+                        const keyObstacle = `${u.id}-o-${oi}`;
+                        if (!obstacleHit.has(keyObstacle) && impactSpeed > OBSTACLE_IMPACT_MIN) {
+                            obstacleHit.add(keyObstacle);
+                            const raw = (impactSpeed - OBSTACLE_IMPACT_MIN) * OBSTACLE_IMPACT_SCALE;
+                            const dmg = Math.max(0, Math.min(OBSTACLE_IMPACT_MAX, Math.round(raw)));
+                            if (dmg > 0) {
+                                u.hp = Math.max(0, u.hp - dmg);
+                                changed = true;
+                            }
+                        }
+                    }
+                }
+            }
+            for (let i = 0; i < unitArr.length; i++) {
+                const a = unitArr[i];
+                for (let j = i + 1; j < unitArr.length; j++) {
+                    const b = unitArr[j];
+                    const dx = b.x - a.x;
+                    const dy = b.y - a.y;
+                    const dist2 = dx * dx + dy * dy;
+                    if (dist2 >= D2)
+                        continue;
+                    let dist = Math.sqrt(dist2);
+                    if (dist < 0.0001) {
+                        dist = 0.0001;
+                    }
+                    const nx = dx / dist;
+                    const ny = dy / dist;
+                    const overlap = D - dist + EPS;
+                    const m1 = a.mass;
+                    const m2 = b.mass;
+                    const mTotal = m1 + m2;
+                    const pushA = overlap * (m2 / mTotal);
+                    const pushB = overlap * (m1 / mTotal);
+                    a.x -= nx * pushA;
+                    a.y -= ny * pushA;
+                    b.x += nx * pushB;
+                    b.y += ny * pushB;
+                    const v1n = a.vx * nx + a.vy * ny;
+                    const v2n = b.vx * nx + b.vy * ny;
+                    const rv = v2n - v1n;
+                    if (rv > 0)
+                        continue;
+                    const impactSpeed = Math.abs(rv);
+                    const e = RESTITUTION;
+                    const newV1n = ((m1 - e * m2) * v1n + (1 + e) * m2 * v2n) / mTotal;
+                    const newV2n = ((m2 - e * m1) * v2n + (1 + e) * m1 * v1n) / mTotal;
+                    a.vx += (newV1n - v1n) * nx;
+                    a.vy += (newV1n - v1n) * ny;
+                    b.vx += (newV2n - v2n) * nx;
+                    b.vy += (newV2n - v2n) * ny;
+                    const keyUnit = a.id < b.id ? `${a.id}-${b.id}` : `${b.id}-${a.id}`;
+                    if (!unitHit.has(keyUnit) && impactSpeed > UNIT_IMPACT_MIN) {
+                        unitHit.add(keyUnit);
+                        const baseRaw = (impactSpeed - UNIT_IMPACT_MIN) * UNIT_IMPACT_SCALE;
+                        const dmg1 = Math.max(0, Math.min(UNIT_IMPACT_MAX, Math.round(baseRaw * (m2 / mTotal) * 1.2)));
+                        const dmg2 = Math.max(0, Math.min(UNIT_IMPACT_MAX, Math.round(baseRaw * (m1 / mTotal) * 1.2)));
+                        if (dmg1 > 0) {
+                            a.hp = Math.max(0, a.hp - dmg1);
+                            changed = true;
+                        }
+                        if (dmg2 > 0) {
+                            b.hp = Math.max(0, b.hp - dmg2);
+                            changed = true;
+                        }
+                    }
+                    changed = true;
+                }
+            }
+            for (const u of unitArr) {
+                if (u.vx === 0 && u.vy === 0)
+                    continue;
+                u.vx *= subFriction;
+                u.vy *= subFriction;
+                if (Math.abs(u.vx) < minV && Math.abs(u.vy) < minV) {
+                    u.vx = 0;
+                    u.vy = 0;
+                }
+            }
+        }
+        // --- 3) tick 末尾：死亡检测 ---
+        const W = GAME_CONSTANTS.WORLD_BOUND;
+        const deadEvents = [];
+        for (const u of [...this.units.values()]) {
+            let reason = null;
+            if (u.hp <= 0)
+                reason = 'hpZero';
+            else if (u.x < -W || u.x > W || u.y < -W || u.y > W)
+                reason = 'outOfBounds';
+            if (reason) {
+                deadEvents.push({
+                    type: 'unitDeath',
+                    ts: Date.now(),
+                    unitId: u.id,
+                    ownerId: u.ownerId,
+                    name: u.name,
+                    reason,
+                    x: u.x,
+                    y: u.y,
+                });
+                this.units.delete(u.id);
+                changed = true;
+            }
+        }
+        if (deadEvents.length > 0 && this.onGameEvent) {
+            for (const evt of deadEvents)
+                this.onGameEvent(evt);
+        }
+        if (changed || this.units.size > 0) {
+            this.onStateChanged();
+        }
     }
 }

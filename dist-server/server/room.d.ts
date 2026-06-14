@@ -1,51 +1,25 @@
-import type { Player, Obstacle, PlayerInput, Bullet, Unit } from '../shared/types';
-export interface GameRoomEvents {
-    onObstacleHit: (payload: {
-        obstacleId: string;
-        hp: number;
-        maxHp: number;
-    }) => void;
-    onObstacleDestroyed: (payload: {
-        obstacleId: string;
-    }) => void;
-}
-interface PlayerSelectionState {
-    selectedUnitId: string;
-    selectedSkillIndex: number;
-}
+import type { Player, Unit, Obstacle, JoinedPayload, GameEvent } from '../shared/types';
 export declare class GameRoom {
-    readonly id: string;
-    readonly players: Map<string, Player>;
-    readonly obstacles: Obstacle[];
-    private playerUnits;
-    private playerSelection;
-    bullets: Bullet[];
-    private lastTickMs;
-    private events;
-    constructor(id: string, events: GameRoomEvents);
-    createPlayer(id: string, name?: string): Player;
-    addPlayer(player: Player): void;
+    private readonly onStateChanged;
+    players: Map<string, Player>;
+    units: Map<string, Unit>;
+    obstacles: Obstacle[];
+    private playerHues;
+    private playerNames;
+    private hueCounter;
+    private tickTimer;
+    private onGameEvent;
+    private pendingShockwaves;
+    constructor(onStateChanged: () => void, options?: {
+        onGameEvent?: (evt: GameEvent) => void;
+    });
+    destroy(): void;
+    createPlayer(id: string, name: string): Player;
     removePlayer(id: string): void;
-    getUnits(playerId: string): Unit[];
-    getSelection(playerId: string): PlayerSelectionState | null;
-    getSelectedUnit(playerId: string): Unit | null;
-    getSelectedSkill(playerId: string): {
-        skill: import('../shared/types').Skill;
-        unit: Unit;
-    } | null;
-    selectUnit(playerId: string, unitId: string): boolean;
-    selectSkill(playerId: string, index: number): boolean;
-    applyInput(id: string, input: PlayerInput): void;
-    addBullet(bullet: Bullet): void;
-    tick(): void;
-    getPlayersSnapshot(): Player[];
+    getUnitsByOwner(ownerId: string): Unit[];
+    getStateFor(playerId: string): JoinedPayload;
+    snapshotUnits(): Unit[];
+    snapshotPlayers(): Player[];
+    applySkill(unitId: string, ownerId: string, skillId: string, dirX: number, dirY: number, charge: number, pointX?: number, pointY?: number): Unit | null;
+    private tick;
 }
-export declare class RoomManager {
-    private rooms;
-    private io;
-    attachIo(io: import('socket.io').Server): void;
-    getOrCreate(roomId: string): GameRoom;
-    get(roomId: string): GameRoom | undefined;
-    getAll(): GameRoom[];
-}
-export {};

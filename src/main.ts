@@ -9,6 +9,7 @@ import { GameState } from './game/state';
 import { EventBus } from './game/events';
 import type { Unit, Player, GameEvent, UnitDeathEvent, SkillCastEvent, Obstacle } from '../shared/types';
 import { GAME_CONSTANTS, SKILL_DEFS } from '../shared/types';
+import { lineOfSight, raycastToFirstHit } from '../shared/physics';
 
 // ---------- Canvas 初始化 ----------
 const canvasEl = document.getElementById('gameCanvas') as HTMLCanvasElement | null;
@@ -156,6 +157,13 @@ interface PointerRecord {
 }
 const activePointers: Map<number, PointerRecord> = new Map();
 
+// 当前鼠标/触控点的屏幕坐标（用于瞄准圆绘制里的视线提示线）
+let lastPointerScreen: { sx: number; sy: number } | null = null;
+
+// POINT_AIM 模式的附加状态（选中单位 + 技能定义）
+let pointAimUnitId: string | null = null;
+let pointAimSkillId: string | null = null;
+
 type Mode = 'IDLE' | 'JOYSTICK' | 'POINT_AIM' | 'PAN' | 'PINCH' | 'MINIMAP';
 let mode: Mode = 'IDLE';
 
@@ -273,6 +281,7 @@ canvas.addEventListener('pointerdown', (e) => {
   const rect = canvas.getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
+  lastPointerScreen = { sx, sy };
 
   const rec: PointerRecord = {
     id: e.pointerId, sx, sy, startSx: sx, startSy: sy,
@@ -283,6 +292,8 @@ canvas.addEventListener('pointerdown', (e) => {
   // 小地图命中优先
   if (hitMinimapAtScreen(sx, sy)) {
     if (joy.active) { joy.active = false; joy.unitId = null; }
+    // 拖动小地图开始就取消选择，避免镜头持续拉回选中单位
+    state.selectUnit(null);
     mode = 'MINIMAP';
     minimapMoveTo(sx, sy);
     return;
@@ -313,19 +324,15 @@ canvas.addEventListener('pointerdown', (e) => {
       const uy = rp ? rp.ry : selected.y;
       const target = screenToWorld(sx, sy);
       const d = Math.hypot(target.x - ux, target.y - uy);
-      // within circle radius (but outside unit itself) → cast skill
+      // 进入技能范围内按下 → 进入 POINT_AIM 模式（松开时才真正释放）
       if (d <= activeDef.radius && d > GAME_CONSTANTS.UNIT_RADIUS + 4) {
-        socket.emit('castSkill', {
-          unitId: selected.id,
-          skillId: activeDef.id,
-          dirX: 0, dirY: 0, charge: 1.0,
-          pointX: target.x, pointY: target.y,
-        });
-        mode = 'IDLE';
+        mode = 'POINT_AIM';
+        pointAimUnitId = selected.id;
+        pointAimSkillId = activeDef.id;
         userPanning = false;
         return;
       }
-      // outside the circle → fall through to default (deselect + pan, cancels aim)
+      // 圆圈外 → fall through to normal deselect/pan
     }
   }
 
@@ -388,6 +395,7 @@ canvas.addEventListener('pointermove', (e) => {
   const rect = canvas.getBoundingClientRect();
   const sx = e.clientX - rect.left;
   const sy = e.clientY - rect.top;
+  lastPointerScreen = { sx, sy };
   const dx = sx - rec.lastSx;
   const dy = sy - rec.lastSy;
   rec.lastSx = sx; rec.lastSy = sy; rec.sx = sx; rec.sy = sy;
@@ -466,10 +474,35 @@ function onPointerEnd(e: PointerEvent, cancel: boolean): void {
   }
 
   if (mode === 'POINT_AIM') {
-    // point 型技能：已在 pointerdown 时处理（点击在圆圈范围内即释放）
-    // 这里仅清理状态
-    joy.active = false;
-    joy.unitId = null;
+    // 释放点型技能：松手才判定（不会被自己阻挡）
+    const unit = state.units.find(u => u.id === pointAimUnitId);
+    if (unit && pointAimSkillId && lastPointerScreen) {
+      const rp = state.getRenderPos(unit.id);
+      const ux = rp ? rp.rx : unit.x;
+      const uy = rp ? rp.ry : unit.y;
+      const target = screenToWorld(lastPointerScreen.sx, lastPointerScreen.sy);
+      const dist = Math.hypot(target.x - ux, target.y - uy);
+      const activeDef = SKILL_DEFS[pointAimSkillId];
+      if (activeDef && activeDef.radius && dist > GAME_CONSTANTS.UNIT_RADIUS + 2 && dist <= activeDef.radius) {
+        // 排除施放者自己 → 不被自己阻挡
+        const otherUnits = state.units.filter(u => u.id !== unit.id);
+        const hasLoS = lineOfSight(ux, uy, target.x, target.y, state.obstacles, otherUnits);
+        if (hasLoS) {
+          socket.emit('castSkill', {
+            unitId: unit.id,
+            skillId: activeDef.id,
+            dirX: 0, dirY: 0, charge: 1.0,
+            pointX: target.x, pointY: target.y,
+          });
+        } else {
+          showBottomHint('视线被阻挡，无法施放');
+        }
+      } else if (activeDef && activeDef.radius && dist > activeDef.radius) {
+        showBottomHint('目标不在技能范围内');
+      }
+    }
+    pointAimUnitId = null;
+    pointAimSkillId = null;
     mode = 'IDLE';
     userPanning = false;
     return;
@@ -495,6 +528,8 @@ function onPointerEnd(e: PointerEvent, cancel: boolean): void {
   }
 
   if (mode === 'MINIMAP') {
+    // 拖动小地图结束后，取消单位选择
+    state.selectUnit(null);
     mode = 'IDLE';
     userPanning = false;
     return;
@@ -1041,6 +1076,69 @@ function drawPointSkillAimCircle(): void {
   ctx.beginPath();
   ctx.arc(screenX, screenY, Math.max(6, (GAME_CONSTANTS.UNIT_RADIUS + 5) * camZoom), 0, Math.PI * 2);
   ctx.stroke();
+
+  // 视线提示线：从单位到当前鼠标位置
+  // - 畅通：单位→鼠标整条画明亮色（实线 + 末端小圆）
+  // - 被阻挡：单位→第一个碰撞点画红色实线（末端红色方块标记）；后面的线不绘制
+  if (lastPointerScreen) {
+    const pw = (lastPointerScreen.sx - window.innerWidth / 2) / camZoom + camX;
+    const ph = (lastPointerScreen.sy - window.innerHeight / 2) / camZoom + camY;
+    const dx = pw - ux;
+    const dy = ph - uy;
+    const dist = Math.hypot(dx, dy);
+    if (dist > GAME_CONSTANTS.UNIT_RADIUS + 2 && dist <= activeDef.radius) {
+      const otherUnits = state.units.filter(u => u.id !== sel.id);
+      const hit = raycastToFirstHit(ux, uy, pw, ph, state.obstacles, otherUnits);
+      const startP = { x: screenX, y: screenY };
+      if (hit) {
+        // 被阻挡：只画到第一个碰撞点（红色）
+        const hp = worldToScreen(hit.x, hit.y);
+        ctx.save();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = 'rgba(240, 60, 70, 0.95)';
+        ctx.beginPath();
+        ctx.moveTo(startP.x, startP.y);
+        ctx.lineTo(hp.x, hp.y);
+        ctx.stroke();
+        // 末端红色方块标记（表示被墙挡住）
+        ctx.fillStyle = 'rgba(240, 60, 70, 0.95)';
+        const mark = Math.max(6, 8 * camZoom);
+        ctx.fillRect(hp.x - mark / 2, hp.y - mark / 2, mark, mark);
+        // 从碰撞点到鼠标位置再画一条极浅的虚线段，帮助定位
+        const mouseP = worldToScreen(pw, ph);
+        ctx.strokeStyle = 'rgba(255, 120, 120, 0.35)';
+        ctx.lineWidth = 1;
+        ctx.setLineDash([4, 6]);
+        ctx.beginPath();
+        ctx.moveTo(hp.x, hp.y);
+        ctx.lineTo(mouseP.x, mouseP.y);
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.restore();
+      } else {
+        // 畅通：画整条明亮线
+        const endP = worldToScreen(pw, ph);
+        ctx.save();
+        ctx.lineWidth = 3;
+        ctx.strokeStyle = `hsla(${sel.hue}, 85%, 70%, 0.9)`;
+        ctx.beginPath();
+        ctx.moveTo(startP.x, startP.y);
+        ctx.lineTo(endP.x, endP.y);
+        ctx.stroke();
+        // 末端小圆
+        ctx.fillStyle = `hsla(${sel.hue}, 85%, 65%, 0.35)`;
+        ctx.beginPath();
+        ctx.arc(endP.x, endP.y, Math.max(4, 6 * camZoom), 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = `hsla(${sel.hue}, 85%, 70%, 0.95)`;
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.arc(endP.x, endP.y, Math.max(4, 6 * camZoom), 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
+      }
+    }
+  }
 
   ctx.restore();
 }

@@ -1,212 +1,309 @@
 import { GAME_CONSTANTS } from '../../shared/types';
 export class GameState {
     selfId = null;
-    players = new Map();
+    selfName = '';
+    players = [];
+    units = []; // 服务端最新状态（权威状态）
     obstacles = [];
-    bullets = [];
-    particles = [];
-    // --- 单位与技能 ---
-    units = [];
-    selectedUnitId = '';
-    selectedSkillIndex = 0;
-    unitPanelOpen = true;
-    lastFrameTime = performance.now();
-    lastBulletTime = performance.now();
+    selectedUnitId = null;
+    // 客户端预测表
+    predicted = new Map();
+    // ------- 配置 -------
+    // 服务器 tick 相关（与 shared/types.ts 和 server/room.ts 保持一致）
+    TICK_MS = GAME_CONSTANTS.TICK_MS;
+    FRICTION = GAME_CONSTANTS.FRICTION; // 每 tick 衰减
+    MIN_VELOCITY = GAME_CONSTANTS.MIN_VELOCITY;
+    WORLD_BOUND = GAME_CONSTANTS.WORLD_BOUND;
+    UNIT_RADIUS = GAME_CONSTANTS.UNIT_RADIUS;
+    // 拉回（reconciliation）系数：每帧让预测位置向服务器位置靠近的比例
+    RECON_POS = 0.08; // 位置回归系数（每帧 8%）
+    RECON_POS_FAST = 0.25; // 刚发射后的短暂时间内回归得更快一点（让服务器同步尽快追上）
+    RECON_VEL = 0.15; // 速度回归系数
+    SNAP_DIST = 120; // 超过此距离直接跳跃（避免穿墙等明显错误）
+    SNAP_MIN = 1.0; // 小于此距离直接对齐（消除残留抖动）
+    // 记录刚发射的单位（短时间内给更高的预测权重）
+    fireCooldownMs = 350;
+    lastFireAt = new Map();
+    // 单位受伤状态（用于 HP 条显示 + 红色闪烁
+    DAMAGE_DISPLAY_MS = 1800; // 受伤后血条持续显示时间
+    lastDamagedAt = new Map();
+    prevHp = new Map();
+    // 客户端选择的技能索引（服务器不维护，所以每次覆盖 state 时需要恢复）
+    clientSkillIndex = new Map();
+    // ==================== 初始化 / 服务器推送 ====================
     init(data) {
         this.selfId = data.selfId;
-        this.obstacles = (data.obstacles || []).map((o) => ({ ...o }));
-        this.players.clear();
-        this.bullets = [];
-        this.particles = [];
-        // 单位与选择
-        this.units = (data.units || []).map((u) => ({
-            ...u,
-            skills: (u.skills || []).map((s) => ({ ...s }))
-        }));
-        this.selectedUnitId = data.selectedUnitId || this.units[0]?.unitId || '';
-        this.selectedSkillIndex = data.selectedSkillIndex ?? 0;
-        for (const p of data.players) {
-            const ex = this.players.get(p.id);
-            if (ex) {
-                ex.targetX = p.x;
-                ex.targetY = p.y;
+        this.selfName = data.selfName;
+        this.players = data.players || [];
+        this.units = data.units || [];
+        this.obstacles = data.obstacles || [];
+        this.predicted.clear();
+        for (const u of this.units) {
+            this.predicted.set(u.id, { px: u.x, py: u.y, pvx: u.vx, pvy: u.vy });
+        }
+        // 初始化客户端技能索引缓存
+        this.clientSkillIndex.clear();
+        for (const u of this.units) {
+            if (typeof u.activeSkillIndex === 'number' && u.skills && u.skills.length > 0) {
+                this.clientSkillIndex.set(u.id, u.activeSkillIndex);
             }
-            else {
-                this.players.set(p.id, { ...p, targetX: p.x, targetY: p.y });
+            else if (u.skills && u.skills.length > 0) {
+                u.activeSkillIndex = 0;
+                this.clientSkillIndex.set(u.id, 0);
             }
         }
-    }
-    addPlayer(p) {
-        const ex = this.players.get(p.id);
-        if (ex) {
-            ex.targetX = p.x;
-            ex.targetY = p.y;
-            ex.x = p.x;
-            ex.y = p.y;
-        }
-        else {
-            this.players.set(p.id, { ...p, targetX: p.x, targetY: p.y });
+        if (!this.selectedUnitId || !this.units.some(u => u.id === this.selectedUnitId)) {
+            const myUnit = this.units.find(u => u.ownerId === this.selfId);
+            this.selectedUnitId = myUnit ? myUnit.id : null;
         }
     }
-    removePlayer(id) {
-        this.players.delete(id);
-    }
-    updateTargets(players) {
-        for (const p of players) {
-            const ex = this.players.get(p.id);
-            if (ex) {
-                ex.targetX = p.x;
-                ex.targetY = p.y;
-            }
-            else {
-                this.players.set(p.id, { ...p, targetX: p.x, targetY: p.y });
+    updateState(payload) {
+        // 先把当前每个单位的 activeSkillIndex 保存到客户端 Map（避免被服务器默认值 0 覆盖）
+        for (const u of this.units) {
+            if (typeof u.activeSkillIndex === 'number') {
+                this.clientSkillIndex.set(u.id, u.activeSkillIndex);
             }
         }
-    }
-    interpolate() {
-        for (const p of this.players.values()) {
-            p.x += (p.targetX - p.x) * 0.25;
-            p.y += (p.targetY - p.y) * 0.25;
+        this.players = payload.players || [];
+        this.units = payload.units || [];
+        // 恢复客户端已选技能索引
+        for (const u of this.units) {
+            const cached = this.clientSkillIndex.get(u.id);
+            if (typeof cached === 'number' && u.skills && u.skills.length > 0) {
+                u.activeSkillIndex = Math.max(0, Math.min(u.skills.length - 1, cached));
+            }
+            else if (u.skills && u.skills.length > 0 && (u.activeSkillIndex === undefined || u.activeSkillIndex < 0)) {
+                u.activeSkillIndex = 0;
+            }
         }
-    }
-    addBullet(bullet) {
-        this.bullets.push(bullet);
-    }
-    updateBullets() {
         const now = performance.now();
-        const dt = (now - this.lastFrameTime) / 1000;
-        this.lastFrameTime = now;
-        if (dt <= 0 || dt > 0.5)
+        const newSet = new Set(this.units.map(u => u.id));
+        // 清理已不存在的单位
+        for (const key of Array.from(this.clientSkillIndex.keys())) {
+            if (!newSet.has(key))
+                this.clientSkillIndex.delete(key);
+        }
+        for (const key of Array.from(this.predicted.keys())) {
+            if (!newSet.has(key))
+                this.predicted.delete(key);
+        }
+        for (const key of Array.from(this.lastDamagedAt.keys())) {
+            if (!newSet.has(key))
+                this.lastDamagedAt.delete(key);
+        }
+        for (const key of Array.from(this.prevHp.keys())) {
+            if (!newSet.has(key))
+                this.prevHp.delete(key);
+        }
+        // 初始化新加入单位 + 检测 hp 变化
+        for (const u of this.units) {
+            const p = this.predicted.get(u.id);
+            if (!p) {
+                this.predicted.set(u.id, { px: u.x, py: u.y, pvx: u.vx, pvy: u.vy });
+            }
+            const prev = this.prevHp.get(u.id);
+            if (prev === undefined) {
+                this.prevHp.set(u.id, u.hp);
+            }
+            else if (u.hp < prev - 0.001) {
+                // 检测到 hp 下降（受伤），记录时间戳
+                this.lastDamagedAt.set(u.id, now);
+                this.prevHp.set(u.id, u.hp);
+            }
+            else if (Math.abs(u.hp - prev) > 0.001) {
+                // hp 上升（治疗 / 重置）也更新，避免误判
+                this.prevHp.set(u.id, u.hp);
+            }
+        }
+        if (this.selectedUnitId && !this.units.some(u => u.id === this.selectedUnitId)) {
+            this.selectedUnitId = null;
+        }
+    }
+    // ==================== 发射预测入口（客户端调用） ====================
+    // 客户端松手发射时调用：dirX/dirY 是发射方向（单位向量），speed 是发射速度
+    // 把预测位置对齐到当前服务器位置 + 预测速度设为发射速度
+    predictFire(unitId, dirX, dirY, speed) {
+        const unit = this.units.find(u => u.id === unitId);
+        if (!unit)
             return;
-        const { BULLET_RADIUS, WORLD_BOUND } = GAME_CONSTANTS;
-        const nextBullets = [];
-        const expireEvents = [];
-        for (const b of this.bullets) {
-            if (now - b.createdAt > b.lifetimeMs) {
-                expireEvents.push(b);
+        const p = this.predicted.get(unitId);
+        if (!p)
+            return;
+        // 对齐预测位置到服务端位置，避免与服务器物理脱节
+        p.px = unit.x;
+        p.py = unit.y;
+        p.pvx = dirX * speed;
+        p.pvy = dirY * speed;
+        this.lastFireAt.set(unitId, performance.now());
+    }
+    // ==================== 每帧预测推进 ====================
+    // dtMs：距上一帧经过的毫秒数（大约 16ms）
+    stepPrediction(dtMs) {
+        if (dtMs <= 0)
+            dtMs = 16;
+        const now = performance.now();
+        for (const u of this.units) {
+            const p = this.predicted.get(u.id);
+            if (!p)
+                continue;
+            // ---------- 1. 本地物理模拟（与服务器保持相同的简化模型） ----------
+            // 使用"等效每帧摩擦"：将 50ms/tick 的摩擦系数按 dt 缩放
+            // 公式：friction_per_frame = FRICTION^(dtMs / TICK_MS)
+            const tickRatio = dtMs / this.TICK_MS;
+            const fr = Math.pow(this.FRICTION, tickRatio);
+            p.px += p.pvx * (dtMs / 1000);
+            p.py += p.pvy * (dtMs / 1000);
+            p.pvx *= fr;
+            p.pvy *= fr;
+            // 速度过小归零
+            const vSq = p.pvx * p.pvx + p.pvy * p.pvy;
+            if (vSq < this.MIN_VELOCITY * this.MIN_VELOCITY) {
+                p.pvx = 0;
+                p.pvy = 0;
+            }
+            // 世界边界钳制（与服务器一致，避免预测偏离到世界外）
+            if (p.px < -this.WORLD_BOUND) {
+                p.px = -this.WORLD_BOUND;
+                p.pvx = -p.pvx * 0.4;
+            }
+            if (p.px > this.WORLD_BOUND) {
+                p.px = this.WORLD_BOUND;
+                p.pvx = -p.pvx * 0.4;
+            }
+            if (p.py < -this.WORLD_BOUND) {
+                p.py = -this.WORLD_BOUND;
+                p.pvy = -p.pvy * 0.4;
+            }
+            if (p.py > this.WORLD_BOUND) {
+                p.py = this.WORLD_BOUND;
+                p.pvy = -p.pvy * 0.4;
+            }
+            // 障碍物（简单近似：若服务器位置已被弹开，预测位置也会因为摩擦减速而趋向一致）
+            // 客户端不做精确碰撞反弹（避免与服务器产生分歧累积），让 reconciliation 自动拉回
+            // ---------- 2. 与服务器状态对齐（Reconciliation） ----------
+            const ddx = u.x - p.px;
+            const ddy = u.y - p.py;
+            const distSq = ddx * ddx + ddy * ddy;
+            // 情况 A：极小偏差 — 直接对齐（消除最后 1px 的抖动感）
+            if (distSq < this.SNAP_MIN * this.SNAP_MIN) {
+                p.px = u.x;
+                p.py = u.y;
+                if (Math.abs(p.pvx - u.vx) < 1 && Math.abs(p.pvy - u.vy) < 1) {
+                    p.pvx = u.vx;
+                    p.pvy = u.vy;
+                }
                 continue;
             }
-            let nx = b.x + b.vx * dt;
-            let ny = b.y + b.vy * dt;
-            if (Math.abs(nx) > WORLD_BOUND || Math.abs(ny) > WORLD_BOUND) {
-                expireEvents.push(b);
+            // 情况 B：过大偏差 — 直接对齐（可能是网络抖动或碰撞，避免与服务器长期错配）
+            if (distSq >= this.SNAP_DIST * this.SNAP_DIST) {
+                p.px = u.x;
+                p.py = u.y;
+                p.pvx = u.vx;
+                p.pvy = u.vy;
                 continue;
             }
-            let collided = false;
-            for (const ob of this.obstacles) {
-                const halfSize = ob.size / 2;
-                const closestX = Math.max(ob.x - halfSize, Math.min(nx, ob.x + halfSize));
-                const closestY = Math.max(ob.y - halfSize, Math.min(ny, ob.y + halfSize));
-                const ddx = nx - closestX;
-                const ddy = ny - closestY;
-                if (ddx * ddx + ddy * ddy < BULLET_RADIUS * BULLET_RADIUS) {
-                    collided = true;
-                    break;
+            // 情况 C：中等偏差 — 以插值系数缓慢拉回（主观感）
+            // 判断是否处于刚发射后的短时间（"预测信任期"），刚发射时位置回归得稍慢
+            const fireT = this.lastFireAt.get(u.id);
+            const justFired = fireT && (now - fireT < this.fireCooldownMs);
+            const reconPos = justFired ? this.RECON_POS * 0.6 : this.RECON_POS;
+            // 距离越大，回归越急（避免长时间拖尾）
+            const dist = Math.sqrt(distSq);
+            const urgency = Math.min(1.0, dist / 60);
+            const alpha = reconPos + (1 - reconPos) * urgency * 0.5;
+            const alphaClamped = Math.min(0.55, alpha);
+            p.px += ddx * alphaClamped;
+            p.py += ddy * alphaClamped;
+            // 速度同步：用较轻的回归（因为速度变化在发射瞬间由客户端决定）
+            // 刚发射后不立刻同步速度，等待服务器的物理结果逐步拉回
+            if (!justFired) {
+                const dvx = u.vx - p.pvx;
+                const dvy = u.vy - p.pvy;
+                p.pvx += dvx * this.RECON_VEL;
+                p.pvy += dvy * this.RECON_VEL;
+            }
+            else {
+                // 发射期内：只在预测速度 < 服务器速度的 40% 时轻微拉一下（避免发射后立刻停住）
+                const predSpeed2 = p.pvx * p.pvx + p.pvy * p.pvy;
+                const servSpeed2 = u.vx * u.vx + u.vy * u.vy;
+                if (predSpeed2 < servSpeed2 * 0.16) {
+                    p.pvx += (u.vx - p.pvx) * 0.12;
+                    p.pvy += (u.vy - p.pvy) * 0.12;
                 }
             }
-            if (collided) {
-                expireEvents.push({ ...b, x: nx, y: ny });
-                continue;
-            }
-            b.x = nx;
-            b.y = ny;
-            nextBullets.push(b);
-        }
-        this.bullets = nextBullets;
-        // 生成粒子
-        for (const b of expireEvents) {
-            this.spawnBulletParticles(b, b.explosive ? 24 : 12);
         }
     }
-    spawnBulletParticles(b, count) {
-        const speed = Math.sqrt(b.vx * b.vx + b.vy * b.vy);
-        const dirX = speed > 0 ? b.vx / speed : 0;
-        const dirY = speed > 0 ? b.vy / speed : 0;
-        for (let i = 0; i < count; i++) {
-            const angle = Math.atan2(dirY, dirX) + (Math.random() - 0.5) * (b.explosive ? Math.PI * 2 : Math.PI);
-            const vel = (b.explosive ? 160 : 80) + Math.random() * (b.explosive ? 200 : 100);
-            this.particles.push({
-                x: b.x,
-                y: b.y,
-                vx: Math.cos(angle) * vel,
-                vy: Math.sin(angle) * vel,
-                hue: b.ownerHue,
-                life: (b.explosive ? 500 : 320) + Math.random() * 200,
-                maxLife: b.explosive ? 700 : 500,
-                size: 2 + Math.random() * (b.explosive ? 4 : 2.5)
-            });
+    // ==================== 渲染入口：返回预测位置 ====================
+    getRenderPos(unitId) {
+        const p = this.predicted.get(unitId);
+        if (!p) {
+            const u = this.units.find(uu => uu.id === unitId);
+            return u ? { rx: u.x, ry: u.y } : null;
         }
+        return { rx: p.px, ry: p.py };
     }
-    updateParticles() {
-        const now = performance.now();
-        const dt = (now - this.lastBulletTime) / 1000;
-        this.lastBulletTime = now;
-        if (dt <= 0 || dt > 0.5)
-            return;
-        const remaining = [];
-        for (const p of this.particles) {
-            p.life -= dt * 1000;
-            if (p.life <= 0)
-                continue;
-            p.x += p.vx * dt;
-            p.y += p.vy * dt;
-            p.vx *= 0.94;
-            p.vy *= 0.94;
-            remaining.push(p);
+    // 判断单位是否完全停下（速度足够小 + 预测状态也已同步到服务器位置）
+    isUnitStopped(unitId) {
+        const u = this.units.find((x) => x.id === unitId);
+        if (!u)
+            return false;
+        const p = this.predicted.get(unitId);
+        // 服务端速度必须接近 0
+        const v2 = u.vx * u.vx + u.vy * u.vy;
+        if (v2 >= 0.5 * 0.5)
+            return false;
+        // 预测速度也必须接近 0（客户端还在滑则不能发射）
+        if (p) {
+            const pv2 = p.pvx * p.pvx + p.pvy * p.pvy;
+            if (pv2 >= 0.5 * 0.5)
+                return false;
+            const dx = p.px - u.x;
+            const dy = p.py - u.y;
+            if (dx * dx + dy * dy >= 2.0 * 2.0)
+                return false;
         }
-        this.particles = remaining;
+        return true;
     }
-    getSelf() {
+    // 单位是否在最近被伤过（用于短暂显示血条
+    wasRecentlyDamaged(unitId) {
+        const t = this.lastDamagedAt.get(unitId);
+        if (t === undefined)
+            return false;
+        return performance.now() - t < this.DAMAGE_DISPLAY_MS;
+    }
+    // 红色闪烁强度：刚受伤时最亮，随后衰减
+    getDamageFlashAlpha(unitId) {
+        const t = this.lastDamagedAt.get(unitId);
+        if (t === undefined)
+            return 0;
+        const elapsed = performance.now() - t;
+        if (elapsed > 400)
+            return 0;
+        // 前 400ms 内快速衰减：从 0.9 → 0
+        return Math.max(0, 0.9 * (1 - elapsed / 400));
+    }
+    // 取得当前玩家的单位
+    getMyUnits() {
         if (!this.selfId)
-            return null;
-        return this.players.get(this.selfId) ?? null;
+            return [];
+        return this.units.filter(u => u.ownerId === this.selfId);
     }
-    // 获取当前选中的单位
     getSelectedUnit() {
         if (!this.selectedUnitId)
             return null;
-        return this.units.find((u) => u.unitId === this.selectedUnitId) ?? this.units[0] ?? null;
+        return this.units.find(u => u.id === this.selectedUnitId) ?? null;
     }
-    // 获取当前选中的技能
-    getSelectedSkill() {
-        const unit = this.getSelectedUnit();
-        if (!unit)
-            return null;
-        return unit.skills[this.selectedSkillIndex] ?? null;
-    }
-    // 选择单位（客户端触发，发送到服务端）
     selectUnit(unitId) {
-        const unit = this.units.find((u) => u.unitId === unitId);
-        if (!unit)
-            return;
-        this.selectedUnitId = unit.unitId;
-        this.selectedSkillIndex = 0;
+        this.selectedUnitId = unitId;
     }
-    // 选择技能（客户端触发，发送到服务端）
-    selectSkill(index) {
-        const unit = this.getSelectedUnit();
-        if (!unit)
+    // 切换某个单位的 active 技能（通过底部技能栏或键盘 1/2/3）
+    setActiveSkillIndex(unitId, index) {
+        const u = this.units.find((x) => x.id === unitId);
+        if (!u || !u.skills || u.skills.length === 0)
             return;
-        if (index < 0 || index >= unit.skills.length)
-            return;
-        this.selectedSkillIndex = index;
-    }
-    // 同步服务端返回的选择
-    applySelection(selectedUnitId, selectedSkillIndex) {
-        if (selectedUnitId)
-            this.selectedUnitId = selectedUnitId;
-        this.selectedSkillIndex = selectedSkillIndex;
-    }
-    updateObstacleHp(payload) {
-        const ob = this.obstacles.find((o) => o.id === payload.obstacleId);
-        if (!ob)
-            return;
-        ob.hp = payload.hp;
-        ob.maxHp = payload.maxHp;
-    }
-    removeObstacle(payload) {
-        const idx = this.obstacles.findIndex((o) => o.id === payload.obstacleId);
-        if (idx !== -1)
-            this.obstacles.splice(idx, 1);
+        const idx = Math.max(0, Math.min(u.skills.length - 1, index));
+        u.activeSkillIndex = idx;
+        // 写入客户端缓存，避免下一次 gameState 覆盖
+        this.clientSkillIndex.set(unitId, idx);
     }
 }

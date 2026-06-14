@@ -1,111 +1,96 @@
-// 前后端共享的游戏类型定义
-// --- 技能模板注册表 ---
-// 不同技能复用相同参数
-export const SKILL_REGISTRY = {
-    bullet_shot: {
-        skillId: 'bullet_shot',
-        name: '弹射炮',
-        icon: '🔫',
-        description: '蓄力发射高速弹丸',
-        speedMin: 320,
-        speedMax: 720,
-        damageMin: 1,
-        damageMax: 5,
-        lifetimeMs: 3000,
-        explosive: false,
-        explosionRadius: 0,
-        explosionDamage: 0,
-        hue: 200,
-        cooldownMs: 0
-    },
-    rocket_shot: {
-        skillId: 'rocket_shot',
-        name: '火箭弹',
-        icon: '🚀',
-        description: '碰撞后范围爆炸',
-        speedMin: 180,
-        speedMax: 280,
-        damageMin: 3,
-        damageMax: 10,
-        lifetimeMs: 5000,
-        explosive: true,
-        explosionRadius: 100,
-        explosionDamage: 8,
-        hue: 20,
-        cooldownMs: 0
-    },
-    dagger_shot: {
-        skillId: 'dagger_shot',
-        name: '飞刀',
-        icon: '🗡️',
-        description: '超高射速短距离',
-        speedMin: 600,
-        speedMax: 900,
-        damageMin: 1,
-        damageMax: 3,
-        lifetimeMs: 1500,
-        explosive: false,
-        explosionRadius: 0,
-        explosionDamage: 0,
-        hue: 120,
-        cooldownMs: 0
-    }
-};
-// --- 单位模板注册表 ---
-export const UNIT_REGISTRY = {
-    soldier: {
-        unitId: 'soldier',
-        name: '突击兵',
-        icon: '🎖️',
-        description: '平衡型单位',
-        hue: 200,
-        skills: [
-            { ...SKILL_REGISTRY.bullet_shot },
-            { ...SKILL_REGISTRY.rocket_shot }
-        ]
-    },
-    ranger: {
-        unitId: 'ranger',
-        name: '游侠',
-        icon: '🏹',
-        description: '快速高射速',
-        hue: 120,
-        skills: [
-            { ...SKILL_REGISTRY.dagger_shot },
-            { ...SKILL_REGISTRY.bullet_shot }
-        ]
-    },
-    gunner: {
-        unitId: 'gunner',
-        name: '炮手',
-        icon: '💣',
-        description: '范围伤害专家',
-        hue: 20,
-        skills: [
-            { ...SKILL_REGISTRY.rocket_shot },
-            { ...SKILL_REGISTRY.bullet_shot }
-        ]
-    }
-};
-// 默认玩家可用的单位列表（服务端会复制一份下发）
-export const DEFAULT_PLAYER_UNITS = [
-    { ...UNIT_REGISTRY.soldier, skills: UNIT_REGISTRY.soldier.skills.map((s) => ({ ...s })) },
-    { ...UNIT_REGISTRY.ranger, skills: UNIT_REGISTRY.ranger.skills.map((s) => ({ ...s })) },
-    { ...UNIT_REGISTRY.gunner, skills: UNIT_REGISTRY.gunner.skills.map((s) => ({ ...s })) }
-];
-// --- 游戏常量（前后端保持一致）---
+// 共享类型定义（弹射物理 + 技能系统）
+// 单位 = 场景实体（RTS风格），玩家 = 控制器
 export const GAME_CONSTANTS = {
+    WORLD_BOUND: 1600,
+    UNIT_RADIUS: 16,
+    OBSTACLE_SIZE: 64,
     TICK_MS: 50,
-    MAX_SPEED: 6,
-    SPEED_PX_PER_SEC: 120,
-    WORLD_BOUND: 10000,
-    CELL: 48,
-    PLAYER_RADIUS: 16,
-    BULLET_SPEED_MIN: 320,
-    BULLET_SPEED_MAX: 720,
-    BULLET_LIFETIME_MS: 3000,
-    BULLET_RADIUS: 5,
-    BULLET_DAMAGE_MIN: 1,
-    BULLET_DAMAGE_MAX: 5,
-    OBSTACLE_MAX_HP: 10
+    FRICTION: 0.92,
+    MIN_VELOCITY: 2,
 };
+// 游戏内所有技能定义表（id -> SkillDef）
+export const SKILL_DEFS = {
+    // 默认弹射：所有单位通用，无消耗、无冷却、速度 = 原行为
+    basic_shot: {
+        id: 'basic_shot',
+        name: '弹射',
+        icon: '➤',
+        type: 'direction',
+        cooldownMs: 0,
+        chargeMultiplier: 1.0,
+        description: '基础弹射：拖拽方向发射',
+    },
+    // 冲锋：速度 x1.8，CD 5 秒
+    charge: {
+        id: 'charge',
+        name: '冲锋',
+        icon: '⚡',
+        type: 'direction',
+        cooldownMs: 5000,
+        chargeMultiplier: 1.8,
+        description: '发射速度 x1.8，CD 5 秒',
+    },
+    // 冲击波（炮手专属）：在目标点产生范围推动 + 伤害
+    shockwave: {
+        id: 'shockwave',
+        name: '冲击波',
+        icon: '💥',
+        type: 'point',
+        cooldownMs: 8000,
+        chargeMultiplier: 1.0,
+        damage: 18,
+        radius: 180,
+        description: '在目标点产生范围冲击波，伤害并推开附近单位',
+    },
+    // 瞬移（游侠专属）：直接传送到点
+    blink: {
+        id: 'blink',
+        name: '瞬移',
+        icon: '✨',
+        type: 'point',
+        cooldownMs: 10000,
+        chargeMultiplier: 1.0,
+        radius: 220,
+        description: '传送到点，CD 10 秒',
+    },
+};
+// 根据单位名决定可学习的技能（保留 basic_shot 为第一个）
+export function defaultSkillsForUnit(unitName) {
+    const base = ['basic_shot', 'charge'];
+    if (unitName === '炮手')
+        return [...base, 'shockwave'];
+    if (unitName === '游侠')
+        return [...base, 'blink'];
+    return base;
+}
+// 单位模板
+function unitTemplates() {
+    return [
+        { name: '突击兵', icon: '🎖️', dx: -32, dy: -32, hpMax: 100, attack: 15, mass: 1.0, baseSpeed: 420 },
+        { name: '炮手', icon: '💣', dx: 0, dy: -48, hpMax: 140, attack: 30, mass: 2.2, baseSpeed: 260 },
+        { name: '游侠', icon: '🏹', dx: 32, dy: -32, hpMax: 85, attack: 20, mass: 0.8, baseSpeed: 520 },
+    ];
+}
+export function makeDefaultUnits(ownerId, hue, spawnX, spawnY) {
+    return unitTemplates().map((t, i) => {
+        const skillIds = defaultSkillsForUnit(t.name);
+        return {
+            id: `${ownerId}-u${i}`,
+            ownerId,
+            name: t.name,
+            icon: t.icon,
+            hue,
+            hp: t.hpMax,
+            hpMax: t.hpMax,
+            attack: t.attack,
+            mass: t.mass,
+            baseSpeed: t.baseSpeed,
+            x: spawnX + t.dx,
+            y: spawnY + t.dy,
+            vx: 0,
+            vy: 0,
+            skills: skillIds.map((id) => ({ defId: id, readyAtTs: 0 })),
+            activeSkillIndex: 0,
+        };
+    });
+}

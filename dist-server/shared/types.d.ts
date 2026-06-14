@@ -1,93 +1,94 @@
+export declare const GAME_CONSTANTS: {
+    readonly WORLD_BOUND: 1600;
+    readonly UNIT_RADIUS: 16;
+    readonly OBSTACLE_SIZE: 64;
+    readonly TICK_MS: 50;
+    readonly FRICTION: 0.92;
+    readonly MIN_VELOCITY: 2;
+};
+export type SkillType = 'direction' | 'point';
+export interface SkillDef {
+    id: string;
+    name: string;
+    icon: string;
+    type: SkillType;
+    cooldownMs: number;
+    chargeMultiplier: number;
+    hpCostPct?: number;
+    damage?: number;
+    radius?: number;
+    description: string;
+}
+export interface UnitSkill {
+    defId: string;
+    readyAtTs: number;
+}
+export declare const SKILL_DEFS: Record<string, SkillDef>;
+export declare function defaultSkillsForUnit(unitName: string): string[];
 export interface Player {
     id: string;
     name: string;
+}
+export interface Unit {
+    id: string;
+    ownerId: string;
+    name: string;
+    icon: string;
+    hue: number;
+    hp: number;
+    hpMax: number;
+    attack: number;
+    mass: number;
+    baseSpeed: number;
     x: number;
     y: number;
     vx: number;
     vy: number;
-    hue: number;
-}
-export interface PlayerInput {
-    vx: number;
-    vy: number;
+    skills: UnitSkill[];
+    activeSkillIndex: number;
 }
 export interface Obstacle {
     id: string;
     x: number;
     y: number;
     size: number;
-    hp: number;
-    maxHp: number;
-}
-export interface JoinRoomPayload {
-    roomId?: string;
-    playerName?: string;
 }
 export interface JoinedPayload {
     selfId: string;
-    self: Player;
+    selfName: string;
     players: Player[];
-    obstacles: Obstacle[];
     units: Unit[];
-    selectedUnitId: string;
-    selectedSkillIndex: number;
+    obstacles: Obstacle[];
 }
-export interface Skill {
-    skillId: string;
-    name: string;
-    icon?: string;
-    description?: string;
-    speedMin: number;
-    speedMax: number;
-    damageMin: number;
-    damageMax: number;
-    lifetimeMs: number;
-    explosive: boolean;
-    explosionRadius: number;
-    explosionDamage: number;
-    hue: number;
-    cooldownMs: number;
+export type GameEventType = 'unitDeath' | 'unitImpulse' | 'skillCast' | 'collision';
+export interface GameEventBase {
+    type: GameEventType;
+    ts: number;
 }
-export interface Unit {
+export interface UnitDeathEvent extends GameEventBase {
+    type: 'unitDeath';
     unitId: string;
-    name: string;
-    icon?: string;
-    description?: string;
-    hue: number;
-    skills: Skill[];
-}
-export declare const SKILL_REGISTRY: Record<string, Skill>;
-export declare const UNIT_REGISTRY: Record<string, Unit>;
-export declare const DEFAULT_PLAYER_UNITS: Unit[];
-export interface Bullet {
-    id: string;
     ownerId: string;
-    ownerName: string;
-    ownerHue: number;
-    ownerSkillId: string;
+    name: string;
+    reason: 'outOfBounds' | 'hpZero';
     x: number;
     y: number;
-    vx: number;
-    vy: number;
-    createdAt: number;
-    damage: number;
-    lifetimeMs: number;
-    explosive: boolean;
-    explosionRadius: number;
-    explosionDamage: number;
 }
-export declare const GAME_CONSTANTS: {
-    readonly TICK_MS: 50;
-    readonly MAX_SPEED: 6;
-    readonly SPEED_PX_PER_SEC: 120;
-    readonly WORLD_BOUND: 10000;
-    readonly CELL: 48;
-    readonly PLAYER_RADIUS: 16;
-    readonly BULLET_SPEED_MIN: 320;
-    readonly BULLET_SPEED_MAX: 720;
-    readonly BULLET_LIFETIME_MS: 3000;
-    readonly BULLET_RADIUS: 5;
-    readonly BULLET_DAMAGE_MIN: 1;
-    readonly BULLET_DAMAGE_MAX: 5;
-    readonly OBSTACLE_MAX_HP: 10;
-};
+export interface UnitImpulseEvent extends GameEventBase {
+    type: 'unitImpulse';
+    unitId: string;
+    skillId: string;
+    ownerId: string;
+    dirX: number;
+    dirY: number;
+    speed: number;
+}
+export interface SkillCastEvent extends GameEventBase {
+    type: 'skillCast';
+    unitId: string;
+    skillId: string;
+    ownerId: string;
+    readyAtTs: number;
+}
+export type GameEvent = UnitDeathEvent | UnitImpulseEvent | SkillCastEvent;
+export declare function makeDefaultUnits(ownerId: string, hue: number, spawnX: number, spawnY: number): Unit[];

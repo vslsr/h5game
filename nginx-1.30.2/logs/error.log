@@ -288,3 +288,70 @@
 2026/06/14 17:26:21 [info] 20676#7768: *129 client 192.168.0.111 closed keepalive connection
 2026/06/14 17:26:21 [info] 20676#7768: *126 client 192.168.0.111 closed keepalive connection
 2026/06/14 17:26:22 [info] 20676#7768: *136 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:49:36 [info] 20676#7768: *172 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:49:36 [info] 20676#7768: *169 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:51:32 [info] 20676#7768: *181 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:51:33 [info] 20676#7768: *178 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:58:56 [info] 20676#7768: *134 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /?token=j86FzYtidyGs HTTP/1.1", upstream: "http://127.0.0.1:5173/?token=j86FzYtidyGs", host: "192.168.0.110:8080"
+2026/06/14 17:58:56 [info] 20676#7768: *182 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=9o2NfKp_OSzy1ckxAAAK HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=9o2NfKp_OSzy1ckxAAAK", host: "192.168.0.110:8080"
+2026/06/14 17:59:37 [info] 20676#7768: *196 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:59:37 [info] 20676#7768: *198 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:59:37 [info] 20676#7768: *195 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:59:37 [info] 20676#7768: *191 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:59:37 [info] 20676#7768: *187 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:07:13 [info] 20676#7768: *220 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:07:13 [info] 20676#7768: *215 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:07:13 [info] 20676#7768: *212 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:07:27 [info] 20676#7768: *227 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=vzhKyTnWndnDMR2sAAAO HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=vzhKyTnWndnDMR2sAAAO", host: "192.168.0.110:8080"
+2026/06/14 18:07:27 [info] 20676#7768: *221 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /?token=j86FzYtidyGs HTTP/1.1", upstream: "http://127.0.0.1:5173/?token=j86FzYtidyGs", host: "192.168.0.110:8080"
+2026/06/14 18:09:02 [info] 20676#7768: *235 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:09:02 [info] 20676#7768: *231 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:09:02 [info] 20676#7768: *239 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:09:02 [info] 20676#7768: *242 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:09:02 [info] 20676#7768: *241 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:09:25 [error] 20676#7768: *250 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=oQc3DR4cptkkaZjSAAAQ HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=oQc3DR4cptkkaZjSAAAQ", host: "192.168.0.110:8080"
+2026/06/14 18:09:41 [error] 20676#7768: *258 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=fKQO0cMISkLIJIHlAAAA HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=fKQO0cMISkLIJIHlAAAA", host: "192.168.0.110:8080"
+2026/06/14 18:10:25 [warn] 20676#7768: *275 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/2/00/0000000002 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:11:06 [warn] 20676#7768: *277 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/3/00/0000000003 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:11:27 [warn] 20676#7768: *254 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/4/00/0000000004 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:11:57 [info] 20676#7768: *278 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:12:26 [info] 20676#7768: *277 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:12:26 [info] 20676#7768: *254 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:12:26 [info] 20676#7768: *257 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:12:26 [info] 20676#7768: *392 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:12:26 [info] 20676#7768: *275 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:13:30 [info] 20676#7768: *403 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:13:31 [info] 20676#7768: *401 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:13:31 [info] 20676#7768: *408 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:13:31 [info] 20676#7768: *410 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:13:31 [info] 20676#7768: *411 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:14:23 [warn] 20676#7768: *426 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/5/00/0000000005 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:14:26 [error] 20676#7768: *423 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=mnmcgmfv HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=mnmcgmfv", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:14:50 [warn] 20676#7768: *431 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/6/00/0000000006 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:15:11 [warn] 20676#7768: *423 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/7/00/0000000007 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:15:40 [info] 20676#7768: *434 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:15:40 [info] 20676#7768: *423 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:15:40 [info] 20676#7768: *426 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:15:40 [info] 20676#7768: *436 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:15:41 [info] 20676#7768: *431 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:15:41 [info] 20676#7768: *455 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:15:49 [info] 20676#7768: *490 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /?token=j86FzYtidyGs HTTP/1.1", upstream: "http://127.0.0.1:5173/?token=j86FzYtidyGs", host: "192.168.0.110:8080"
+2026/06/14 18:15:49 [info] 20676#7768: *500 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=yjHvHfO4e6sj-dWRAAAO HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=yjHvHfO4e6sj-dWRAAAO", host: "192.168.0.110:8080"
+2026/06/14 18:20:47 [warn] 20676#7768: *508 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/8/00/0000000008 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:21:17 [info] 20676#7768: *504 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:21:17 [info] 20676#7768: *508 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:21:17 [info] 20676#7768: *515 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:21:17 [info] 20676#7768: *518 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:21:17 [info] 20676#7768: *517 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:36:47 [warn] 20676#7768: *531 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/9/00/0000000009 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:37:16 [info] 20676#7768: *528 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:37:16 [info] 20676#7768: *531 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:37:16 [info] 20676#7768: *538 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:37:16 [info] 20676#7768: *542 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:37:16 [info] 20676#7768: *539 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:37:52 [warn] 20676#7768: *554 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/0/01/0000000010 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 18:38:21 [info] 20676#7768: *551 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:38:21 [info] 20676#7768: *554 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:38:21 [info] 20676#7768: *561 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:38:21 [info] 20676#7768: *564 client 192.168.0.111 closed keepalive connection
+2026/06/14 18:38:21 [info] 20676#7768: *562 client 192.168.0.111 closed keepalive connection

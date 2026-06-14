@@ -1,61 +1,44 @@
-import type { Player, Obstacle, JoinedPayload, Bullet, Unit, Skill } from '../../shared/types';
-export interface GameStateData {
-    selfId: string | null;
-    players: Map<string, Player & {
-        targetX: number;
-        targetY: number;
-    }>;
-    obstacles: Obstacle[];
-}
-export interface BulletParticle {
-    x: number;
-    y: number;
-    vx: number;
-    vy: number;
-    hue: number;
-    life: number;
-    maxLife: number;
-    size: number;
-}
+import type { Player, Unit, Obstacle, JoinedPayload } from '../../shared/types';
 export declare class GameState {
     selfId: string | null;
-    players: Map<string, Player & {
-        targetX: number;
-        targetY: number;
-    }>;
-    obstacles: Obstacle[];
-    bullets: Bullet[];
-    particles: BulletParticle[];
+    selfName: string;
+    players: Player[];
     units: Unit[];
-    selectedUnitId: string;
-    selectedSkillIndex: number;
-    unitPanelOpen: boolean;
-    private lastFrameTime;
-    private lastBulletTime;
+    obstacles: Obstacle[];
+    selectedUnitId: string | null;
+    private predicted;
+    private readonly TICK_MS;
+    private readonly FRICTION;
+    private readonly MIN_VELOCITY;
+    private readonly WORLD_BOUND;
+    private readonly UNIT_RADIUS;
+    private readonly RECON_POS;
+    private readonly RECON_POS_FAST;
+    private readonly RECON_VEL;
+    private readonly SNAP_DIST;
+    private readonly SNAP_MIN;
+    private readonly fireCooldownMs;
+    private lastFireAt;
+    private readonly DAMAGE_DISPLAY_MS;
+    private lastDamagedAt;
+    private prevHp;
+    private clientSkillIndex;
     init(data: JoinedPayload): void;
-    addPlayer(p: Player): void;
-    removePlayer(id: string): void;
-    updateTargets(players: Player[]): void;
-    interpolate(): void;
-    addBullet(bullet: Bullet): void;
-    updateBullets(): void;
-    private spawnBulletParticles;
-    updateParticles(): void;
-    getSelf(): (Player & {
-        targetX: number;
-        targetY: number;
-    }) | null;
+    updateState(payload: {
+        players: Player[];
+        units: Unit[];
+    }): void;
+    predictFire(unitId: string, dirX: number, dirY: number, speed: number): void;
+    stepPrediction(dtMs: number): void;
+    getRenderPos(unitId: string): {
+        rx: number;
+        ry: number;
+    } | null;
+    isUnitStopped(unitId: string): boolean;
+    wasRecentlyDamaged(unitId: string): boolean;
+    getDamageFlashAlpha(unitId: string): number;
+    getMyUnits(): Unit[];
     getSelectedUnit(): Unit | null;
-    getSelectedSkill(): Skill | null;
-    selectUnit(unitId: string): void;
-    selectSkill(index: number): void;
-    applySelection(selectedUnitId: string, selectedSkillIndex: number): void;
-    updateObstacleHp(payload: {
-        obstacleId: string;
-        hp: number;
-        maxHp: number;
-    }): void;
-    removeObstacle(payload: {
-        obstacleId: string;
-    }): void;
+    selectUnit(unitId: string | null): void;
+    setActiveSkillIndex(unitId: string, index: number): void;
 }

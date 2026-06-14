@@ -1,202 +1,119 @@
-// 后端：Express + Socket.IO 服务器入口
+// 服务端入口：Express + Socket.IO（联网 + 单位弹射物理 + 技能系统）
 import express from 'express';
-import { createServer } from 'http';
-import { Server } from 'socket.io';
-import os from 'os';
-import path from 'path';
-import { fileURLToPath } from 'url';
 import fs from 'fs';
+import http from 'http';
+import { Server as SocketIOServer } from 'socket.io';
+import { fileURLToPath } from 'url';
+import path from 'path';
+import { GameRoom } from './room';
 import { GAME_CONSTANTS } from '../shared/types';
-import { RoomManager } from './room';
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-const PORT = Number(process.env.PORT) || 3000;
-const { TICK_MS } = GAME_CONSTANTS;
-const IS_PRODUCTION = process.env.NODE_ENV === 'production';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
-if (IS_PRODUCTION) {
-    const distPath = path.join(__dirname, '..', 'dist');
-    if (fs.existsSync(distPath)) {
-        app.use(express.static(distPath));
-    }
-    app.get('/', (_req, res) => {
-        const indexPath = path.join(distPath, 'index.html');
-        if (fs.existsSync(indexPath)) {
-            res.sendFile(indexPath);
+app.use(express.json());
+// ============== 生产模式：托管 Vite 构建产物 dist/ ==============
+// 路径相对 server/server.ts：通常 dist 在仓库根；允许被 env 覆盖
+const DIST = process.env.H5SGAME_DIST || path.resolve(__dirname, '..', '..', 'dist');
+if (fs.existsSync(path.join(DIST, 'index.html'))) {
+    app.use(express.static(DIST, { maxAge: '1h', index: 'index.html' }));
+    // 所有未匹配的路由返回 index.html（SPA fallback）
+    app.get('*', (_req, res, next) => {
+        if (_req.headers.accept && _req.headers.accept.includes('text/html')) {
+            res.sendFile(path.join(DIST, 'index.html'));
+            return;
         }
-        else {
-            res.status(404).send('Build not found. Run: npm run build');
-        }
+        next();
     });
+    console.log(`[server] serving static from: ${DIST}`);
 }
-else {
-    app.use(express.static(path.join(__dirname, '..')));
-    app.get('/', (_req, res) => {
-        res.sendFile(path.join(__dirname, '..', 'index.html'));
-    });
-}
-const httpServer = createServer(app);
-const io = new Server(httpServer, {
-    cors: { origin: '*', methods: ['GET', 'POST'] }
+const server = http.createServer(app);
+const io = new SocketIOServer(server, {
+    cors: { origin: '*', methods: ['GET', 'POST'] },
 });
-const roomManager = new RoomManager();
-roomManager.attachIo(io);
+// 全局单房间（多人即加入同一房间）
+const room = new GameRoom(() => {
+    // tick 回调：每 tick 广播所有单位位置给所有客户端
+    io.emit('gameState', {
+        players: room.snapshotPlayers(),
+        units: room.snapshotUnits(),
+    });
+}, {
+    // 游戏事件（单位死亡、技能施放等）：通过 gameEvent 单独广播给所有客户端
+    onGameEvent: (evt) => {
+        io.emit('gameEvent', evt);
+    },
+});
 io.on('connection', (socket) => {
-    console.log(`[Connect] ${socket.id}`);
-    const state = { roomId: null, playerId: socket.id };
-    socket.on('joinRoom', ({ roomId, playerName }) => {
-        const room = roomManager.getOrCreate(roomId || 'default');
-        state.roomId = room.id;
-        const player = room.createPlayer(socket.id, playerName);
-        room.addPlayer(player);
-        socket.join(room.id);
-        const selection = room.getSelection(state.playerId);
-        socket.emit('joined', {
-            selfId: player.id,
-            self: player,
-            players: room.getPlayersSnapshot(),
-            obstacles: room.obstacles,
-            units: room.getUnits(state.playerId),
-            selectedUnitId: selection?.selectedUnitId ?? '',
-            selectedSkillIndex: selection?.selectedSkillIndex ?? 0
+    console.log(`[socket] connected ${socket.id}`);
+    socket.on('joinRoom', (payload) => {
+        const name = (payload?.name || '玩家').toString().slice(0, 16);
+        room.createPlayer(socket.id, name);
+        socket.emit('joined', room.getStateFor(socket.id));
+        io.emit('gameState', {
+            players: room.snapshotPlayers(),
+            units: room.snapshotUnits(),
         });
-        socket.to(room.id).emit('playerJoined', player);
-        console.log(`[Join] ${player.name} -> ${room.id} (total: ${room.players.size})`);
+        console.log(`[room] ${socket.id} (${name}) joined; units=${room.snapshotUnits().length}`);
     });
-    socket.on('playerInput', (input) => {
-        if (!state.roomId)
+    // 技能施放：客户端按住选中单位拖拽/点地 → 松手后发送
+    socket.on('castSkill', (payload) => {
+        if (!payload?.unitId || !payload?.skillId)
             return;
-        const room = roomManager.get(state.roomId);
-        if (!room)
-            return;
-        room.applyInput(state.playerId, input);
-    });
-    // 选择单位
-    socket.on('unitSelect', (payload) => {
-        if (!state.roomId)
-            return;
-        const room = roomManager.get(state.roomId);
-        if (!room)
-            return;
-        if (room.selectUnit(state.playerId, payload.unitId)) {
-            const sel = room.getSelection(state.playerId);
-            socket.emit('selectionUpdated', {
-                selectedUnitId: sel?.selectedUnitId ?? '',
-                selectedSkillIndex: sel?.selectedSkillIndex ?? 0
+        const unit = room.applySkill(payload.unitId, socket.id, payload.skillId, typeof payload.dirX === 'number' ? payload.dirX : 0, typeof payload.dirY === 'number' ? payload.dirY : 0, typeof payload.charge === 'number' ? payload.charge : 0.5, typeof payload.pointX === 'number' ? payload.pointX : undefined, typeof payload.pointY === 'number' ? payload.pointY : undefined);
+        if (unit) {
+            // 立即广播一次最新状态（速度/位置变化 + HP 变化）
+            io.emit('gameState', {
+                players: room.snapshotPlayers(),
+                units: room.snapshotUnits(),
             });
         }
-    });
-    // 选择技能（索引）
-    socket.on('skillSelect', (payload) => {
-        if (!state.roomId)
-            return;
-        const room = roomManager.get(state.roomId);
-        if (!room)
-            return;
-        if (room.selectSkill(state.playerId, payload.index)) {
-            const sel = room.getSelection(state.playerId);
-            socket.emit('selectionUpdated', {
-                selectedUnitId: sel?.selectedUnitId ?? '',
-                selectedSkillIndex: sel?.selectedSkillIndex ?? 0
-            });
-        }
-    });
-    // 子弹发射：基于当前选中的技能属性
-    socket.on('bulletFire', (payload) => {
-        if (!state.roomId)
-            return;
-        const room = roomManager.get(state.roomId);
-        if (!room)
-            return;
-        const owner = room.players.get(state.playerId);
-        if (!owner)
-            return;
-        const currentSkill = room.getSelectedSkill(state.playerId);
-        const skill = currentSkill?.skill;
-        if (!skill)
-            return;
-        // 归一化方向
-        let { vx, vy } = payload;
-        const len = Math.sqrt(vx * vx + vy * vy);
-        if (len === 0)
-            return;
-        const dirX = vx / len;
-        const dirY = vy / len;
-        // 蓄力大小限制在 0.2 ~ 1.0
-        const charge = Math.min(1.0, Math.max(0.2, payload.charge));
-        // 速度 & 伤害插值
-        const speed = skill.speedMin + (skill.speedMax - skill.speedMin) * charge;
-        const damage = Math.round(skill.damageMin + (skill.damageMax - skill.damageMin) * charge);
-        const bullet = {
-            id: `${socket.id}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-            ownerId: owner.id,
-            ownerName: owner.name,
-            ownerHue: currentSkill.unit.hue,
-            ownerSkillId: skill.skillId,
-            x: payload.x,
-            y: payload.y,
-            vx: dirX * speed,
-            vy: dirY * speed,
-            createdAt: Date.now(),
-            damage,
-            lifetimeMs: skill.lifetimeMs,
-            explosive: skill.explosive,
-            explosionRadius: skill.explosionRadius,
-            explosionDamage: skill.explosionDamage
-        };
-        room.addBullet(bullet);
-        io.to(state.roomId).emit('bulletFired', bullet);
     });
     socket.on('disconnect', () => {
-        if (!state.roomId)
-            return;
-        const room = roomManager.get(state.roomId);
-        if (room) {
-            const player = room.players.get(state.playerId);
-            room.removePlayer(state.playerId);
-            socket.to(state.roomId).emit('playerLeft', state.playerId);
-            console.log(`[Disconnect] ${player?.name ?? state.playerId} from ${state.roomId}`);
-        }
+        room.removePlayer(socket.id);
+        io.emit('gameState', {
+            players: room.snapshotPlayers(),
+            units: room.snapshotUnits(),
+        });
+        console.log(`[socket] ${socket.id} disconnected`);
     });
 });
-setInterval(() => {
-    for (const room of roomManager.getAll()) {
-        room.tick();
-        io.to(room.id).emit('gameState', room.getPlayersSnapshot());
-    }
-}, TICK_MS);
-httpServer.on('error', (err) => {
-    if (err.code === 'EADDRINUSE') {
-        console.error(`端口 ${PORT} 已被占用。使用: npm run kill-port 或 set PORT=${PORT + 1} && npm start`);
-        process.exit(1);
-    }
-    else {
-        console.error('[Server Error]', err);
-    }
+// 开发模式：页面从 Vite 的 5173 加载，:3000 只提供跳转页
+app.get('/', (_req, res) => {
+    res.type('text/html; charset=utf-8');
+    res.send('<!doctype html><html><head><title>Redirecting...</title>' +
+        '<meta http-equiv="refresh" content="0; url=http://localhost:5173/"></head>' +
+        '<body style="background:#0f1624;color:#fff;font-family:sans-serif;padding:40px;text-align:center">' +
+        '<h2>请在开发服务器 http://localhost:5173/ 打开游戏</h2>' +
+        '<p>（后端 Socket.IO 运行于端口 3000；页面由 Vite 提供）</p>' +
+        '</body></html>');
 });
-httpServer.listen(PORT, () => {
-    const ips = [];
-    const ifaces = os.networkInterfaces();
-    for (const name in ifaces) {
-        const ifaceList = ifaces[name];
-        if (!ifaceList)
-            continue;
-        for (const iface of ifaceList) {
-            if (iface.family === 'IPv4' && !iface.internal) {
-                ips.push(iface.address);
-            }
-        }
+const PORT = Number(process.env.PORT) || 3000;
+// ============== 热更接口：部署成功后 systemctl 会重启本进程 ==============
+// 安全：通过 H5SGAME_DEPLOY_KEY 环境变量设置密钥；未设置则禁用该接口
+const DEPLOY_KEY = process.env.H5SGAME_DEPLOY_KEY || '';
+app.post('/api/deploy', (req, res) => {
+    if (!DEPLOY_KEY) {
+        res.statusCode = 403;
+        res.json({ ok: false, message: 'deploy disabled (set H5SGAME_DEPLOY_KEY)' });
+        return;
     }
-    console.log('\n=== H5 Game Server ===');
-    if (IS_PRODUCTION) {
-        console.log(`[Production] 访问: http://localhost:${PORT}`);
+    const key = (req.headers['x-deploy-key'] || req.query.key || req.body?.key);
+    if (key !== DEPLOY_KEY) {
+        res.statusCode = 403;
+        res.json({ ok: false, message: 'invalid deploy key' });
+        return;
     }
-    else {
-        console.log(`[Dev] Socket.IO: ws://localhost:${PORT}`);
-        console.log(`[Dev] 前端页面: http://localhost:5173 (Vite dev server)`);
-        console.log(`[Dev] 也可直接访问 http://localhost:${PORT}`);
-    }
-    for (const ip of ips)
-        console.log(`       http://${ip}:${PORT}`);
-    console.log('');
+    const logPath = path.join(__dirname, '..', 'deploy.log');
+    // 异步执行部署脚本（执行时间长，立即返回开始标识，真正完成由脚本重启本进程）
+    import('child_process').then(({ exec }) => {
+        const script = path.join(__dirname, '..', 'deploy', 'deploy.sh');
+        const cp = exec(`bash "${script}" > "${logPath}" 2>&1`, (err, stdout, stderr) => {
+            console.log(`[deploy] exit=${err?.code ?? 0} out=${stdout.length}B err=${stderr.length}B`);
+        });
+        cp.unref();
+    });
+    res.json({ ok: true, message: 'deploy started, server will restart shortly' });
+});
+server.listen(PORT, '0.0.0.0', () => {
+    console.log(`[server] h5sgame on http://0.0.0.0:${PORT}/  tick_ms=${GAME_CONSTANTS.TICK_MS}`);
+    console.log(`[server] DEPLOY_KEY=${DEPLOY_KEY ? '<set>' : '<off>'}`);
 });
