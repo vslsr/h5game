@@ -1,0 +1,35 @@
+[Unit]
+Description=h5sgame game server (express + socket.io)
+After=network.target
+
+[Service]
+Type=simple
+# 运行身份：用你登录的用户名；需要时改成 root 或专用用户
+User=root
+Group=root
+
+# 项目根目录（在服务器上的部署路径，首次部署时改成实际路径，例如 /opt/h5sgame）
+WorkingDirectory=/opt/h5sgame
+
+# 环境变量（密钥自行更换，越长越安全）
+Environment=NODE_ENV=production
+Environment=PORT=3000
+Environment=H5SGAME_DEPLOY_KEY=change-me-to-a-long-random-string
+
+# 启动命令：用 node 运行编译后的 server/server.js
+ExecStart=/usr/bin/env node server/server.js
+
+# 日志（通过 journalctl -u h5sgame 查看）
+StandardOutput=journal
+StandardError=journal
+
+# 重启策略：崩溃自动重启
+Restart=always
+RestartSec=3
+
+# 可部署者执行 sudo systemctl restart h5sgame（无需 sudo 密码，见下方说明）
+# 注意：若 User=root 则无需下面配置；如果是普通用户，需 visudo 给该用户权限
+#   %deploy ALL=(ALL) NOPASSWD: /bin/systemctl restart h5sgame, /bin/systemctl status h5sgame
+
+[Install]
+WantedBy=multi-user.target

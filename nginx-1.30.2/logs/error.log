@@ -1,0 +1,290 @@
+2026/06/14 16:19:39 [notice] 25800#22120: using the "select" event method
+2026/06/14 16:19:39 [notice] 25800#22120: nginx/1.30.2
+2026/06/14 16:19:39 [info] 25800#22120: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:39 [notice] 25800#22120: start worker processes
+2026/06/14 16:19:39 [notice] 25800#22120: start worker process 20732
+2026/06/14 16:19:40 [notice] 20732#22372: nginx/1.30.2
+2026/06/14 16:19:40 [info] 20732#22372: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:40 [notice] 20732#22372: create thread 25664
+2026/06/14 16:19:40 [notice] 20732#22372: create thread 24184
+2026/06/14 16:19:40 [notice] 20732#22372: create thread 22400
+2026/06/14 16:19:40 [notice] 25800#22120: start worker process 15764
+2026/06/14 16:19:40 [notice] 15764#25264: nginx/1.30.2
+2026/06/14 16:19:40 [info] 15764#25264: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:40 [notice] 15764#25264: create thread 6368
+2026/06/14 16:19:40 [notice] 15764#25264: create thread 18912
+2026/06/14 16:19:40 [notice] 15764#25264: create thread 5428
+2026/06/14 16:19:40 [notice] 25800#22120: start worker process 25948
+2026/06/14 16:19:40 [notice] 25948#18540: nginx/1.30.2
+2026/06/14 16:19:40 [info] 25948#18540: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:40 [notice] 25948#18540: create thread 16812
+2026/06/14 16:19:40 [notice] 25948#18540: create thread 23680
+2026/06/14 16:19:40 [notice] 25948#18540: create thread 13480
+2026/06/14 16:19:40 [notice] 25800#22120: start worker process 13648
+2026/06/14 16:19:41 [notice] 13648#2604: nginx/1.30.2
+2026/06/14 16:19:41 [info] 13648#2604: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:41 [notice] 13648#2604: create thread 21340
+2026/06/14 16:19:41 [notice] 13648#2604: create thread 14032
+2026/06/14 16:19:41 [notice] 13648#2604: create thread 6648
+2026/06/14 16:19:41 [notice] 25800#22120: start worker process 13140
+2026/06/14 16:19:41 [notice] 13140#26248: nginx/1.30.2
+2026/06/14 16:19:41 [info] 13140#26248: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:41 [notice] 13140#26248: create thread 16892
+2026/06/14 16:19:41 [notice] 13140#26248: create thread 25504
+2026/06/14 16:19:41 [notice] 13140#26248: create thread 23308
+2026/06/14 16:19:41 [notice] 25800#22120: start worker process 9456
+2026/06/14 16:19:41 [notice] 9456#25184: nginx/1.30.2
+2026/06/14 16:19:41 [info] 9456#25184: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:41 [notice] 9456#25184: create thread 25468
+2026/06/14 16:19:41 [notice] 9456#25184: create thread 15240
+2026/06/14 16:19:41 [notice] 9456#25184: create thread 6512
+2026/06/14 16:19:41 [notice] 25800#22120: start worker process 22232
+2026/06/14 16:19:42 [notice] 22232#16872: nginx/1.30.2
+2026/06/14 16:19:42 [info] 22232#16872: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:42 [notice] 22232#16872: create thread 13592
+2026/06/14 16:19:42 [notice] 22232#16872: create thread 20492
+2026/06/14 16:19:42 [notice] 22232#16872: create thread 4984
+2026/06/14 16:19:42 [notice] 25800#22120: start worker process 22804
+2026/06/14 16:19:42 [notice] 22804#7396: nginx/1.30.2
+2026/06/14 16:19:42 [info] 22804#7396: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 16:19:42 [notice] 22804#7396: create thread 11644
+2026/06/14 16:19:42 [notice] 22804#7396: create thread 21424
+2026/06/14 16:19:42 [notice] 22804#7396: create thread 24228
+2026/06/14 16:44:38 [info] 20732#25664: *1 client 127.0.0.1 closed keepalive connection
+2026/06/14 16:44:38 [info] 20732#25664: *5 client 127.0.0.1 closed keepalive connection
+2026/06/14 16:44:38 [info] 20732#25664: *6 client 127.0.0.1 closed keepalive connection
+2026/06/14 16:44:38 [info] 20732#25664: *2 client 127.0.0.1 closed keepalive connection
+2026/06/14 16:46:29 [info] 20732#25664: *13 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 16:46:29 [info] 20732#25664: *14 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 16:50:51 [info] 20732#25664: *15 client 127.0.0.1 closed keepalive connection (10054: An existing connection was forcibly closed by the remote host)
+2026/06/14 16:56:24 [info] 20732#25664: *30 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 16:56:24 [info] 20732#25664: *31 client closed connection while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 16:56:43 [info] 20732#25664: *23 client timed out (10060: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 16:56:43 [info] 20732#25664: *25 client timed out (10060: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 16:57:25 [info] 20732#25664: *34 client 127.0.0.1 closed keepalive connection
+2026/06/14 16:57:25 [info] 20732#25664: *32 client 127.0.0.1 closed keepalive connection
+2026/06/14 17:00:42 [info] 20732#25664: *43 client timed out (10060: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 17:00:42 [info] 20732#25664: *45 client timed out (10060: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond) while waiting for request, client: 127.0.0.1, server: 0.0.0.0:8080
+2026/06/14 17:02:33 [notice] 16212#20580: signal process started
+2026/06/14 17:02:33 [notice] 25800#22120: reconfiguring
+2026/06/14 17:02:33 [notice] 25800#22120: using the "select" event method
+2026/06/14 17:02:33 [notice] 25800#22120: start worker processes
+2026/06/14 17:02:33 [notice] 25800#22120: start worker process 19520
+2026/06/14 17:02:33 [notice] 19520#22852: nginx/1.30.2
+2026/06/14 17:02:33 [info] 19520#22852: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:33 [notice] 19520#22852: create thread 25288
+2026/06/14 17:02:33 [notice] 19520#22852: create thread 12224
+2026/06/14 17:02:33 [notice] 19520#22852: create thread 9772
+2026/06/14 17:02:33 [notice] 25800#22120: start worker process 25400
+2026/06/14 17:02:34 [notice] 25400#24912: nginx/1.30.2
+2026/06/14 17:02:34 [info] 25400#24912: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:34 [notice] 25400#24912: create thread 23356
+2026/06/14 17:02:34 [notice] 25400#24912: create thread 10048
+2026/06/14 17:02:34 [notice] 25400#24912: create thread 23864
+2026/06/14 17:02:34 [notice] 25800#22120: start worker process 21124
+2026/06/14 17:02:34 [notice] 21124#9332: nginx/1.30.2
+2026/06/14 17:02:34 [info] 21124#9332: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:34 [notice] 21124#9332: create thread 24784
+2026/06/14 17:02:34 [notice] 21124#9332: create thread 21704
+2026/06/14 17:02:34 [notice] 21124#9332: create thread 24980
+2026/06/14 17:02:35 [notice] 25800#22120: start worker process 19616
+2026/06/14 17:02:35 [notice] 19616#22240: nginx/1.30.2
+2026/06/14 17:02:35 [info] 19616#22240: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:35 [notice] 19616#22240: create thread 20716
+2026/06/14 17:02:35 [notice] 19616#22240: create thread 14140
+2026/06/14 17:02:35 [notice] 19616#22240: create thread 7284
+2026/06/14 17:02:35 [notice] 25800#22120: start worker process 25020
+2026/06/14 17:02:36 [notice] 25020#22364: nginx/1.30.2
+2026/06/14 17:02:36 [info] 25020#22364: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:36 [notice] 25020#22364: create thread 18844
+2026/06/14 17:02:36 [notice] 25020#22364: create thread 26428
+2026/06/14 17:02:36 [notice] 25020#22364: create thread 16216
+2026/06/14 17:02:36 [notice] 25800#22120: start worker process 14520
+2026/06/14 17:02:37 [notice] 14520#4676: nginx/1.30.2
+2026/06/14 17:02:37 [info] 14520#4676: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:37 [notice] 14520#4676: create thread 18760
+2026/06/14 17:02:37 [notice] 14520#4676: create thread 3980
+2026/06/14 17:02:37 [notice] 14520#4676: create thread 15012
+2026/06/14 17:02:37 [notice] 25800#22120: start worker process 21364
+2026/06/14 17:02:38 [notice] 21364#16440: nginx/1.30.2
+2026/06/14 17:02:38 [info] 21364#16440: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:38 [notice] 21364#16440: create thread 17036
+2026/06/14 17:02:38 [notice] 21364#16440: create thread 22216
+2026/06/14 17:02:38 [notice] 21364#16440: create thread 24880
+2026/06/14 17:02:38 [notice] 25800#22120: start worker process 2224
+2026/06/14 17:02:40 [notice] 2224#14876: nginx/1.30.2
+2026/06/14 17:02:40 [info] 2224#14876: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:02:40 [notice] 13648#2604: gracefully shutting down
+2026/06/14 17:02:40 [notice] 13648#14032: exiting
+2026/06/14 17:02:40 [notice] 25948#18540: gracefully shutting down
+2026/06/14 17:02:40 [notice] 25948#23680: exiting
+2026/06/14 17:02:40 [notice] 15764#25264: gracefully shutting down
+2026/06/14 17:02:40 [notice] 20732#22372: gracefully shutting down
+2026/06/14 17:02:40 [notice] 22804#7396: gracefully shutting down
+2026/06/14 17:02:40 [notice] 22232#16872: gracefully shutting down
+2026/06/14 17:02:40 [notice] 13140#26248: gracefully shutting down
+2026/06/14 17:02:40 [notice] 9456#25184: gracefully shutting down
+2026/06/14 17:02:40 [notice] 22804#21424: exiting
+2026/06/14 17:02:40 [notice] 22232#20492: exiting
+2026/06/14 17:02:40 [notice] 13140#25504: exiting
+2026/06/14 17:02:40 [notice] 9456#15240: exiting
+2026/06/14 17:02:40 [notice] 20732#24184: exiting
+2026/06/14 17:02:40 [notice] 15764#18912: exiting
+2026/06/14 17:02:40 [notice] 2224#14876: create thread 25876
+2026/06/14 17:02:40 [notice] 2224#14876: create thread 13604
+2026/06/14 17:02:40 [notice] 25948#16812: exiting
+2026/06/14 17:02:40 [notice] 22232#13592: exiting
+2026/06/14 17:02:40 [notice] 15764#6368: exiting
+2026/06/14 17:02:40 [notice] 2224#14876: create thread 25100
+2026/06/14 17:02:40 [notice] 15764#25264: exit
+2026/06/14 17:02:40 [notice] 25948#18540: exit
+2026/06/14 17:02:40 [notice] 22232#16872: exit
+2026/06/14 17:02:41 [notice] 22804#11644: exiting
+2026/06/14 17:02:41 [notice] 13140#16892: exiting
+2026/06/14 17:02:41 [notice] 9456#25468: exiting
+2026/06/14 17:02:41 [notice] 13648#21340: exiting
+2026/06/14 17:02:41 [notice] 25800#22120: worker process 22232 exited with code 0
+2026/06/14 17:02:41 [notice] 22804#7396: exit
+2026/06/14 17:02:41 [notice] 13140#26248: exit
+2026/06/14 17:02:41 [notice] 9456#25184: exit
+2026/06/14 17:02:41 [notice] 13648#2604: exit
+2026/06/14 17:02:41 [notice] 25800#22120: worker process 25948 exited with code 0
+2026/06/14 17:02:41 [notice] 25800#22120: worker process 15764 exited with code 0
+2026/06/14 17:02:41 [notice] 25800#22120: worker process 13140 exited with code 0
+2026/06/14 17:02:41 [notice] 25800#22120: worker process 9456 exited with code 0
+2026/06/14 17:02:42 [notice] 25800#22120: worker process 13648 exited with code 0
+2026/06/14 17:02:42 [notice] 25800#22120: worker process 22804 exited with code 0
+2026/06/14 17:03:43 [notice] 21828#24884: signal process started
+2026/06/14 17:03:43 [notice] 25800#22120: reconfiguring
+2026/06/14 17:03:43 [notice] 25800#22120: using the "select" event method
+2026/06/14 17:03:43 [notice] 25800#22120: start worker processes
+2026/06/14 17:03:43 [notice] 25800#22120: start worker process 20676
+2026/06/14 17:03:43 [notice] 20676#19152: nginx/1.30.2
+2026/06/14 17:03:43 [info] 20676#19152: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:43 [notice] 20676#19152: create thread 7768
+2026/06/14 17:03:43 [notice] 20676#19152: create thread 19368
+2026/06/14 17:03:43 [notice] 20676#19152: create thread 19980
+2026/06/14 17:03:43 [notice] 25800#22120: start worker process 22936
+2026/06/14 17:03:44 [notice] 22936#7200: nginx/1.30.2
+2026/06/14 17:03:44 [info] 22936#7200: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:44 [notice] 22936#7200: create thread 17560
+2026/06/14 17:03:44 [notice] 22936#7200: create thread 19008
+2026/06/14 17:03:44 [notice] 22936#7200: create thread 26568
+2026/06/14 17:03:44 [notice] 25800#22120: start worker process 16452
+2026/06/14 17:03:44 [notice] 16452#26340: nginx/1.30.2
+2026/06/14 17:03:44 [info] 16452#26340: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:44 [notice] 16452#26340: create thread 13836
+2026/06/14 17:03:44 [notice] 16452#26340: create thread 21192
+2026/06/14 17:03:44 [notice] 16452#26340: create thread 9512
+2026/06/14 17:03:45 [notice] 25800#22120: start worker process 23176
+2026/06/14 17:03:45 [notice] 23176#23340: nginx/1.30.2
+2026/06/14 17:03:45 [info] 23176#23340: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:45 [notice] 23176#23340: create thread 6476
+2026/06/14 17:03:45 [notice] 23176#23340: create thread 24368
+2026/06/14 17:03:45 [notice] 23176#23340: create thread 6432
+2026/06/14 17:03:45 [notice] 25800#22120: start worker process 22368
+2026/06/14 17:03:45 [notice] 22368#4924: nginx/1.30.2
+2026/06/14 17:03:45 [info] 22368#4924: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:45 [notice] 22368#4924: create thread 3964
+2026/06/14 17:03:45 [notice] 22368#4924: create thread 25804
+2026/06/14 17:03:45 [notice] 22368#4924: create thread 7528
+2026/06/14 17:03:46 [notice] 25800#22120: start worker process 18464
+2026/06/14 17:03:46 [notice] 18464#24664: nginx/1.30.2
+2026/06/14 17:03:46 [info] 18464#24664: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:46 [notice] 18464#24664: create thread 17796
+2026/06/14 17:03:46 [notice] 18464#24664: create thread 1160
+2026/06/14 17:03:46 [notice] 18464#24664: create thread 4412
+2026/06/14 17:03:46 [notice] 25800#22120: start worker process 24228
+2026/06/14 17:03:47 [notice] 24228#22696: nginx/1.30.2
+2026/06/14 17:03:47 [info] 24228#22696: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:47 [notice] 24228#22696: create thread 21576
+2026/06/14 17:03:47 [notice] 24228#22696: create thread 11536
+2026/06/14 17:03:47 [notice] 24228#22696: create thread 1412
+2026/06/14 17:03:47 [notice] 25800#22120: start worker process 4984
+2026/06/14 17:03:47 [notice] 4984#16872: nginx/1.30.2
+2026/06/14 17:03:47 [info] 4984#16872: OS: 260200 build:9200, "", suite:300, type:1
+2026/06/14 17:03:47 [notice] 19520#22852: gracefully shutting down
+2026/06/14 17:03:47 [notice] 25400#24912: gracefully shutting down
+2026/06/14 17:03:47 [notice] 21124#9332: gracefully shutting down
+2026/06/14 17:03:47 [notice] 19616#22240: gracefully shutting down
+2026/06/14 17:03:47 [notice] 19520#12224: exiting
+2026/06/14 17:03:47 [notice] 25020#22364: gracefully shutting down
+2026/06/14 17:03:47 [notice] 14520#4676: gracefully shutting down
+2026/06/14 17:03:47 [notice] 21364#16440: gracefully shutting down
+2026/06/14 17:03:47 [notice] 2224#14876: gracefully shutting down
+2026/06/14 17:03:47 [notice] 25400#10048: exiting
+2026/06/14 17:03:47 [notice] 21124#21704: exiting
+2026/06/14 17:03:47 [notice] 19616#14140: exiting
+2026/06/14 17:03:47 [notice] 14520#3980: exiting
+2026/06/14 17:03:47 [notice] 25020#26428: exiting
+2026/06/14 17:03:47 [notice] 21364#22216: exiting
+2026/06/14 17:03:47 [notice] 2224#13604: exiting
+2026/06/14 17:03:47 [notice] 4984#16872: create thread 21748
+2026/06/14 17:03:47 [notice] 4984#16872: create thread 18316
+2026/06/14 17:03:47 [notice] 4984#16872: create thread 22336
+2026/06/14 17:03:47 [notice] 19520#25288: exiting
+2026/06/14 17:03:47 [notice] 19520#22852: exit
+2026/06/14 17:03:47 [notice] 19616#20716: exiting
+2026/06/14 17:03:47 [notice] 14520#18760: exiting
+2026/06/14 17:03:47 [notice] 19616#22240: exit
+2026/06/14 17:03:47 [notice] 14520#4676: exit
+2026/06/14 17:03:47 [notice] 25400#23356: exiting
+2026/06/14 17:03:47 [notice] 25400#24912: exit
+2026/06/14 17:03:47 [notice] 25800#22120: worker process 19520 exited with code 0
+2026/06/14 17:03:47 [notice] 2224#25876: exiting
+2026/06/14 17:03:47 [notice] 21124#24784: exiting
+2026/06/14 17:03:47 [notice] 2224#14876: exit
+2026/06/14 17:03:47 [notice] 21124#9332: exit
+2026/06/14 17:03:48 [notice] 25020#18844: exiting
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 14520 exited with code 0
+2026/06/14 17:03:48 [notice] 25020#22364: exit
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 19616 exited with code 0
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 25400 exited with code 0
+2026/06/14 17:03:48 [notice] 21364#17036: exiting
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 25020 exited with code 0
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 2224 exited with code 0
+2026/06/14 17:03:48 [notice] 21364#16440: exit
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 21124 exited with code 0
+2026/06/14 17:03:48 [notice] 25800#22120: worker process 21364 exited with code 0
+2026/06/14 17:05:17 [notice] 20732#25664: exiting
+2026/06/14 17:05:17 [notice] 20732#22372: exit
+2026/06/14 17:05:17 [notice] 25800#22120: worker process 20732 exited with code 0
+2026/06/14 17:06:32 [info] 20676#7768: *85 client 127.0.0.1 closed keepalive connection
+2026/06/14 17:06:32 [info] 20676#7768: *78 client 127.0.0.1 closed keepalive connection
+2026/06/14 17:06:32 [info] 20676#7768: *87 client 127.0.0.1 closed keepalive connection
+2026/06/14 17:06:32 [info] 20676#7768: *75 client 127.0.0.1 closed keepalive connection
+2026/06/14 17:10:16 [info] 20676#7768: *81 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 127.0.0.1, server: _, request: "GET /?token=j86FzYtidyGs HTTP/1.1", upstream: "http://127.0.0.1:5173/?token=j86FzYtidyGs", host: "g2cff3ac.natappfree.cc"
+2026/06/14 17:10:16 [info] 20676#7768: *66 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 127.0.0.1, server: _, request: "GET /?token=j86FzYtidyGs HTTP/1.1", upstream: "http://127.0.0.1:5173/?token=j86FzYtidyGs", host: "g2cff3ac.natappfree.cc"
+2026/06/14 17:10:16 [info] 20676#7768: *70 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 127.0.0.1, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=d-NDha7ZJJ0G0b-4AABN HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=d-NDha7ZJJ0G0b-4AABN", host: "g2cff3ac.natappfree.cc"
+2026/06/14 17:10:16 [info] 20676#7768: *94 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 127.0.0.1, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=-65haLhhbJexLgAxAABR HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=-65haLhhbJexLgAxAABR", host: "g2cff3ac.natappfree.cc"
+2026/06/14 17:22:25 [warn] 20676#7768: *101 an upstream response is buffered to a temporary file C:\wkspc\h5sgame\nginx-1.30.2/temp/proxy_temp/1/00/0000000001 while reading upstream, client: 192.168.0.111, server: _, request: "GET /src/main.ts HTTP/1.1", upstream: "http://127.0.0.1:5173/src/main.ts", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:22:55 [info] 20676#7768: *101 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:22:55 [info] 20676#7768: *107 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:22:55 [info] 20676#7768: *108 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:22:55 [info] 20676#7768: *105 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:22:55 [info] 20676#7768: *98 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:24:10 [error] 20676#7768: *118 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=wAyX3HMwLnBOEFFDAABT HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=wAyX3HMwLnBOEFFDAABT", host: "192.168.0.110:8080"
+2026/06/14 17:24:13 [error] 20676#7768: *123 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kv17aik6 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kv17aik6", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:16 [error] 20676#7768: *123 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kv3sa93q HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kv3sa93q", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:16 [info] 20676#7768: *123 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:24:18 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kv5kkpa8 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kv5kkpa8", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:21 [error] 20676#7768: *126 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kv7nsjg2 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kv7nsjg2", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:25 [error] 20676#7768: *136 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvad4ig6 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvad4ig6", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:29 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvdkdn0c HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvdkdn0c", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:33 [error] 20676#7768: *126 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvh88ug3 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvh88ug3", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:39 [error] 20676#7768: *136 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvl5w6h4 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvl5w6h4", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:44 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvp72i4x HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvp72i4x", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:49 [error] 20676#7768: *126 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvt58byl HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvt58byl", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:54 [error] 20676#7768: *136 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kvx3g6i4 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kvx3g6i4", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:24:59 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kw11oa19 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kw11oa19", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:04 [error] 20676#7768: *126 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kw4zwkfu HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kw4zwkfu", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:09 [error] 20676#7768: *136 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kw8wdcoe HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kw8wdcoe", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:14 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kwcwd64a HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kwcwd64a", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:19 [error] 20676#7768: *126 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kwgulzh2 HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kwgulzh2", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:25 [error] 20676#7768: *136 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kwkstfvb HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kwkstfvb", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:30 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kwor0zcn HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kwor0zcn", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:25:47 [error] 20676#7768: *157 WSARecv() failed (10054: An existing connection was forcibly closed by the remote host) while proxying upgraded connection, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=websocket&sid=BVMOM_65Iz81elCfAAAC HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=websocket&sid=BVMOM_65Iz81elCfAAAC", host: "192.168.0.110:8080"
+2026/06/14 17:25:49 [error] 20676#7768: *129 connect() failed (10061: No connection could be made because the target machine actively refused it) while connecting to upstream, client: 192.168.0.111, server: _, request: "GET /socket.io/?EIO=4&transport=polling&t=kx3u26mz HTTP/1.1", upstream: "http://127.0.0.1:3000/socket.io/?EIO=4&transport=polling&t=kx3u26mz", host: "192.168.0.110:8080", referrer: "http://192.168.0.110:8080/"
+2026/06/14 17:26:21 [info] 20676#7768: *129 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:26:21 [info] 20676#7768: *126 client 192.168.0.111 closed keepalive connection
+2026/06/14 17:26:22 [info] 20676#7768: *136 client 192.168.0.111 closed keepalive connection
