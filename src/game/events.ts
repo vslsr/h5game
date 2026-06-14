@@ -1,6 +1,6 @@
 // 事件总线：客户端统一的游戏事件订阅/广播
 // 用途：监听单位死亡、碰撞、弹射等事件，驱动 UI 提示、动画等
-import type { GameEvent, GameEventType } from '../../shared/types';
+import type { GameEvent, GameEventType } from '../../shared/types.js';
 
 type Handler<T extends GameEvent = GameEvent> = (evt: T) => void;
 

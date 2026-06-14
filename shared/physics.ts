@@ -1,5 +1,5 @@
 // 前后端共享的碰撞检测与物理逻辑
-import { GAME_CONSTANTS, type Obstacle } from './types';
+import { GAME_CONSTANTS, type Obstacle } from './types.js';
 
 const UNIT_RADIUS = GAME_CONSTANTS.UNIT_RADIUS;
 const EPS = 1e-6;

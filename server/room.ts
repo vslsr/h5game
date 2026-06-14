@@ -1,7 +1,7 @@
 // 服务端：房间管理（基础联网 + 单位弹射物理 + 死亡检测 + 事件总线 + 技能系统）
-import type { Player, Unit, Obstacle, JoinedPayload, GameEvent, UnitDeathEvent, SkillCastEvent, UnitImpulseEvent } from '../shared/types';
-import { GAME_CONSTANTS, SKILL_DEFS, makeDefaultUnits } from '../shared/types';
-import { lineOfSight } from '../shared/physics';
+import type { Player, Unit, Obstacle, JoinedPayload, GameEvent, UnitDeathEvent, SkillCastEvent, UnitImpulseEvent } from '../shared/types.js';
+import { GAME_CONSTANTS, SKILL_DEFS, makeDefaultUnits } from '../shared/types.js';
+import { lineOfSight } from '../shared/physics.js';
 
 // 冲击波：一次立即结算的范围事件（本 tick 内直接执行）
 interface ShockwaveEffect {

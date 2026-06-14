@@ -8,8 +8,8 @@
 //     * 若偏差过大 (>= 120px)：直接对齐，避免穿越地图的明显错误
 //   - 发射瞬间把预测速度设为发射速度，使发射瞬间立即响应（无输入延迟）
 //   - 渲染始终使用预测位置
-import type { Player, Unit, Obstacle, JoinedPayload } from '../../shared/types';
-import { GAME_CONSTANTS } from '../../shared/types';
+import type { Player, Unit, Obstacle, JoinedPayload } from '../../shared/types.js';
+import { GAME_CONSTANTS } from '../../shared/types.js';
 
 // 每个单位的客户端预测状态
 interface PredictedState {

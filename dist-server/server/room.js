@@ -1,5 +1,5 @@
-import { GAME_CONSTANTS, SKILL_DEFS, makeDefaultUnits } from '../shared/types';
-import { lineOfSight } from '../shared/physics';
+import { GAME_CONSTANTS, SKILL_DEFS, makeDefaultUnits } from '../shared/types.js';
+import { lineOfSight } from '../shared/physics.js';
 export class GameRoom {
     onStateChanged;
     players = new Map();

@@ -7352,3 +7352,309 @@ Error: write ECONNABORTED
     at Socket.ondata (node:internal/streams/readable:754:22)
     at Socket.emit (node:events:527:28)
     at addChunk (node:internal/streams/readable:315:12)
+19:07:33 [vite] ws proxy error:
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:217:20)
+19:07:33 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ojz6m4in:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:07:36 [vite] ws proxy error:
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:217:20)
+19:07:37 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ok1j47vk:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:07:38 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ok2huoab:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:07:38 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ok2tqqay:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:07:39 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ok3ebm73:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:07:43 [vite] ws proxy socket error:
+Error: write ECONNABORTED
+    at afterWriteDispatched (node:internal/stream_base_commons:160:15)
+    at writeGeneric (node:internal/stream_base_commons:151:3)
+    at Socket._writeGeneric (node:net:817:11)
+    at Socket._write (node:net:829:8)
+    at writeOrBuffer (node:internal/streams/writable:389:12)
+    at _write (node:internal/streams/writable:330:10)
+    at Socket.Writable.write (node:internal/streams/writable:334:10)
+    at Socket.ondata (node:internal/streams/readable:754:22)
+    at Socket.emit (node:events:527:28)
+    at addChunk (node:internal/streams/readable:315:12)
+19:14:49 [vite] ws proxy error:
+Error: read ECONNRESET
+    at TCP.onStreamRead (node:internal/stream_base_commons:217:20)
+19:14:50 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otbokj9i:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:14:51 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otcqz1ds:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:14:53 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otdxtp7o:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:14:55 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otg403iw:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:14:58 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otig0wum:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:01 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otkrq1j1:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:04 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otn39par:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:07 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otpeyvjq:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:10 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otrqw1xz:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:13 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otu3yisr:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:16 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otwfgb1p:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:20 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=otyruglo:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:23 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ou13s26c:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:26 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ou3fia43:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:29 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ou5rb0px:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:32 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ou835mbm:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:35 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouaeu4wy:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:38 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oucrduwt:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:41 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouf3asyn:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:44 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouhezept:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:47 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oujqp2xk:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:50 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oum2cnfx:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:53 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouodzpbg:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:56 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouqplyxb:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:15:59 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=out1fokd:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:02 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouvdeycf:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:05 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ouxp6d1m:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:08 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ov0101ye:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:11 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ov2cusz7:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:14 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ov4ovqlv:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:17 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ov71bbr0:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:20 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ov9eq6ip:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:23 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovc2kbpm:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:27 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oveft7up:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:30 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovh4elle:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:33 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovjls0e6:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:37 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovm2ntav:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:40 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovoz9w5h:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:44 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovrucn8t:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:47 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovua7cpr:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:51 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovx70qpg:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:54 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ovzjgon1:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:16:57 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ow1vi4xf:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:00 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ow47fohb:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:03 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ow6jgm34:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:06 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ow8vkc86:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:09 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owb7ivpa:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:12 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owdkoiut:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:15 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owfzvu5y:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:18 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owic0a75:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:21 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owko96rg:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:25 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=own9c68i:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:28 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owplztqi:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:31 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owry30py:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:34 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owua00b3:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:37 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owwmavhx:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:40 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=owyy97ow:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:43 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ox1gk8vu:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:46 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ox3tinf0:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:49 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ox67my85:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:52 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=ox8myhg2:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:55 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxaz46or:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:17:58 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxdb4krh:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:01 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxfoboqa:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:05 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxi2aqzq:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:08 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxkfigvm:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:11 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxmx5nse:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:14 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxpbdt7k:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:17 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxrnhhbk:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:20 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxu0a9r5:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:23 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxwhz7ve:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:26 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oxyvlj85:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:29 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oy17tst5:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:32 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oy3k8j11:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:35 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oy5wgjdb:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:38 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oy88p8go:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:41 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyakl0cd:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:44 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oycwedtt:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:47 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyf8741o:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:50 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyhjs5e2:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:53 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyjvevek:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:18:56 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oym70gtb:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:00 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyoivfcp:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:03 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyquhd5d:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:06 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyt61qa8:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:09 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyvhvdeo:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:12 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oyxtl5ov:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:15 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oz054uv1:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:18 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oz2gz8og:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)
+19:19:21 [vite] http proxy error at /socket.io/?EIO=4&transport=polling&t=oz4sriqe:
+Error: connect ECONNREFUSED 127.0.0.1:3000
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1187:16)

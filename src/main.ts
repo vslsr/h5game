@@ -5,11 +5,11 @@
 //   3. direction 型：按住该单位 → 拖拽 → 松手发射
 //      point 型：激活后在地图上点一个目标点 → 立即施放
 import { io } from 'socket.io-client';
-import { GameState } from './game/state';
-import { EventBus } from './game/events';
-import type { Unit, Player, GameEvent, UnitDeathEvent, SkillCastEvent, Obstacle } from '../shared/types';
-import { GAME_CONSTANTS, SKILL_DEFS } from '../shared/types';
-import { lineOfSight, raycastToFirstHit } from '../shared/physics';
+import { GameState } from './game/state.js';
+import { EventBus } from './game/events.js';
+import type { Unit, Player, GameEvent, UnitDeathEvent, SkillCastEvent, Obstacle } from '../shared/types.js';
+import { GAME_CONSTANTS, SKILL_DEFS } from '../shared/types.js';
+import { lineOfSight, raycastToFirstHit } from '../shared/physics.js';
 
 // ---------- Canvas 初始化 ----------
 const canvasEl = document.getElementById('gameCanvas') as HTMLCanvasElement | null;

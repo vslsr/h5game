@@ -1,4 +1,4 @@
-import type { GameEvent, GameEventType } from '../../shared/types';
+import type { GameEvent, GameEventType } from '../../shared/types.js';
 type Handler<T extends GameEvent = GameEvent> = (evt: T) => void;
 declare class EventBusImpl {
     private listeners;

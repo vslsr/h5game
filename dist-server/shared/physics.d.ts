@@ -1,4 +1,4 @@
-import { type Obstacle } from './types';
+import { type Obstacle } from './types.js';
 interface CircleRectResult {
     x: number;
     y: number;

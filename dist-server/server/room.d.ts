@@ -1,4 +1,4 @@
-import type { Player, Unit, Obstacle, JoinedPayload, GameEvent } from '../shared/types';
+import type { Player, Unit, Obstacle, JoinedPayload, GameEvent } from '../shared/types.js';
 export declare class GameRoom {
     private readonly onStateChanged;
     players: Map<string, Player>;

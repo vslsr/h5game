@@ -1,4 +1,4 @@
-import type { Player, Unit, Obstacle, JoinedPayload } from '../../shared/types';
+import type { Player, Unit, Obstacle, JoinedPayload } from '../../shared/types.js';
 export declare class GameState {
     selfId: string | null;
     selfName: string;

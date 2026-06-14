@@ -120,3 +120,10 @@ firewall-cmd --reload
 
 # 别忘了在云厂商控制台（阿里云/腾讯云）放行同样的端口
 ```
+
+
+重置：
+```
+sudo nginx -t
+sudo systemctl reload nginx
+```

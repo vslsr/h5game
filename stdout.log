@@ -757,3 +757,7 @@
 18:17:14 [vite] page reload src/main.ts
 18:36:46 [vite] page reload src/main.ts
 18:37:52 [vite] page reload src/main.ts
+19:07:37 [vite] page reload shared/physics.ts
+19:07:41 [vite] page reload src/main.ts
+19:07:43 [vite] page reload src/game/state.ts
+19:07:44 [vite] page reload src/game/events.ts

@@ -1,5 +1,5 @@
 // 前后端共享的碰撞检测与物理逻辑
-import { GAME_CONSTANTS } from './types';
+import { GAME_CONSTANTS } from './types.js';
 const UNIT_RADIUS = GAME_CONSTANTS.UNIT_RADIUS;
 const EPS = 1e-6;
 // 圆 vs 矩形 AABB 碰撞：将圆心推回最近的非重叠点

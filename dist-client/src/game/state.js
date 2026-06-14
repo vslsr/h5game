@@ -1,4 +1,4 @@
-import { GAME_CONSTANTS } from '../../shared/types';
+import { GAME_CONSTANTS } from '../../shared/types.js';
 export class GameState {
     selfId = null;
     selfName = '';
